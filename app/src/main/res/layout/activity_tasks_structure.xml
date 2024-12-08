@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tasks_structure"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".TasksStructure">
+
+    <LinearLayout
+        android:id="@+id/task_str_toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/type_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:layout_below="@id/task_str_toolbar_layout"
+        >
+
+        <TextView
+            android:id="@+id/type_header"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="Тип"
+            android:textColor="@color/gray"
+            android:layout_gravity="bottom"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/type_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Сборка заказа"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/task_str_parameters_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:layout_below="@id/type_layout"
+        android:weightSum="3">
+
+
+        <LinearLayout
+            android:id="@+id/status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:id="@+id/status_header"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray"
+                android:text="Статус"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/status_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Открыта"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/date_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/date_header"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray"
+                android:text="Создана"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/date_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 авг 2024"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/priority_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/priority_header"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray"
+                android:text="Приоритет"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/priority_view_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/priority_imageview"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/priority_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Приоритет"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/data_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/task_str_parameters_layout">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:paddingHorizontal="12dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/employee_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="2"
+            >
+
+        <TextView
+            android:id="@+id/implementer_header"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="15sp"
+            android:gravity="bottom"
+            android:text="Исполнитель" />
+
+        <EditText
+            android:id="@+id/implementer_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:background="@drawable/border_layout_search"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/deadline_date_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp">
+
+        <TextView
+            android:id="@+id/deadline_date_header"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="15sp"
+            android:gravity="bottom"
+            android:text="Дата выполнения" />
+
+        <EditText
+            android:id="@+id/deadline_date_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:layout_gravity="center"
+            android:background="@drawable/border_layout_search"/>
+
+        </LinearLayout>
+</LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp">
+
+        <TextView
+            android:id="@+id/details_header"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:textSize="15sp"
+            android:gravity="bottom"
+            android:text="Детали" />
+
+            <EditText
+                android:id="@+id/details_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/border_layout_search"
+                android:ems="10"
+                android:gravity="top"
+                android:inputType="text"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/history_header"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textSize="15sp"
+        android:gravity="bottom"
+        android:text="История"
+        android:layout_below="@id/data_layout"
+        android:paddingHorizontal="12dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/history_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/history_header"
+        android:paddingHorizontal="12dp"
+        android:weightSum="3">
+
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Исполнитель"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Дата"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Изменено:"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/history_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/history_layout"
+        android:paddingHorizontal="12dp"
+        android:weightSum="3">
+
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Исполнитель"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Дата"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Изменено:"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/history_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/history_layout2"
+        android:paddingHorizontal="12dp"
+        android:weightSum="3">
+
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Исполнитель"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Дата"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Изменено:"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:paddingHorizontal="12dp">
+
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:backgroundTint="@color/light_purple"
+            android:text="Отклонить"
+            android:textColor="@color/red"
+            android:textSize="18sp"
+            app:cornerRadius="5dp"
+            app:strokeWidth="1dp"
+            app:icon="@drawable/baseline_cancel_24"
+            app:iconGravity="textStart"
+            app:iconSize="25dp"
+            app:iconTint="@color/red"
+            android:paddingHorizontal="7dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/light_purple"
+            android:text="Сохранить"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:cornerRadius="5dp"
+            app:strokeWidth="1dp"
+            app:icon="@drawable/baseline_check_24"
+            app:iconGravity="textStart"
+            app:iconSize="30dp"
+            app:iconTint="@color/black"
+            android:layout_marginEnd="2dp"
+            android:paddingHorizontal="7dp"/>
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/light_purple"
+                android:paddingHorizontal="7dp"
+                android:text="В работу"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:cornerRadius="5dp"
+                app:icon="@drawable/baseline_play_arrow_24"
+                app:iconGravity="textStart"
+                app:iconSize="30dp"
+                app:iconTint="@color/black"
+                android:layout_marginStart="2dp"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

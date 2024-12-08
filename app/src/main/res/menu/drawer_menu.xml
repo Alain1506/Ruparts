@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/tasks_id"
+            android:icon="@drawable/baseline_home_24"
+            android:title="Задачи" />
+
+        <item
+            android:id="@+id/razm_id"
+            android:title="Размещение"
+            android:icon="@drawable/baseline_home_24" />
+        <item
+            android:id="@+id/tov_id"
+            android:title="Работа с товаром"
+            android:icon="@drawable/baseline_home_24"/>
+        <item
+            android:id="@+id/lists_id"
+            android:title="Работа со списками"
+            android:icon="@drawable/baseline_arrow_drop_down_24" />
+        <item
+            android:id="@+id/photo_id"
+            android:title="_Список на фото"
+            android:icon="@drawable/baseline_home_24"/>
+        <item
+            android:id="@+id/dust_id"
+            android:title="_Список на утилизацию"
+            android:icon="@drawable/baseline_home_24"/>
+        <item
+            android:id="@+id/vosst_id"
+            android:title="_Список на восстановление"
+            android:icon="@drawable/baseline_home_24"/>
+
+    </group>
+
+</menu>
