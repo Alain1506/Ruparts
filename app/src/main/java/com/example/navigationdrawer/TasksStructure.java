@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.navigationdrawer.helperclasses.LibraryMaps;
 import com.example.navigationdrawer.helperclasses.TaskBodyObject;
 
 public class TasksStructure extends AppCompatActivity {
@@ -31,6 +32,7 @@ public class TasksStructure extends AppCompatActivity {
 
     int imagevalue;
     TextView priorityText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +56,9 @@ public class TasksStructure extends AppCompatActivity {
         taskStatus = findViewById(R.id.status_view);
         taskCreatedDate = findViewById(R.id.date_view);
         taskImplementer = findViewById(R.id.implementer_view);
+        priorityText = findViewById(R.id.priority_view);
 
         Bundle arguments = getIntent().getExtras();
-        imagevalue = arguments.getInt("image");
-
 
         if(arguments != null){
 
@@ -65,17 +66,24 @@ public class TasksStructure extends AppCompatActivity {
 
             comments.setText(tbo.description);
             data.setText(tbo.finish_at);
-            priority.setImageResource(imagevalue);
-            taskType.setText(tbo.type);
-            taskStatus.setText(tbo.status);
-            taskCreatedDate.setText(tbo.created_at);
-            taskImplementer.setText(tbo.implementer);
 
-            priorityText = findViewById(R.id.priority_view);
-
-            if (imagevalue == R.drawable.baseline_circle_24) {
-                priorityText.setText("Высокий");
+            switch (tbo.priority) {
+                case  ("high"):
+                    priority.setImageResource(R.drawable.baseline_circle_24);
+                    priorityText.setText("Высокий");
+                    break;
+                case ("low"):
+                    priority.setImageResource(R.drawable.baseline_circle_24_yellow);
+                    priorityText.setText("Низкий");
+                    break;
+                default:
+                    priority.setImageResource(R.drawable.ic_house_foreground);
+                    break;
             }
+            taskType.setText(TasksActivity.libraryMaps.task_types.get(tbo.type));
+            taskStatus.setText(TasksActivity.libraryMaps.status.get(tbo.status));
+            taskCreatedDate.setText(tbo.created_at);
+            taskImplementer.setText(TasksActivity.libraryMaps.implementer.get(tbo.implementer));
 
             getSupportActionBar().setSubtitle(tbo.title);
 

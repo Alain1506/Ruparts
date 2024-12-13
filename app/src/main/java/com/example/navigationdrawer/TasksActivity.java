@@ -22,6 +22,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.navigationdrawer.helperclasses.LibraryMaps;
 import com.example.navigationdrawer.helperclasses.TaskBodyObject;
 import com.example.navigationdrawer.helperclasses.TaskObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +32,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -46,12 +49,14 @@ public class TasksActivity extends AppCompatActivity {
     private Button btn;
     private String token;
     private List<TaskBodyObject> listOfTasks = new ArrayList<>();
-    TaskBodyObject tbo;
+//    private TaskBodyObject tbo;
 
     private ImageView priorityItem;
     private TextView taskItem;
     private TextView commentsItem;
     private TextView dateItem;
+
+    public static LibraryMaps libraryMaps = new LibraryMaps();
 
 
     @Override
@@ -73,6 +78,21 @@ public class TasksActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         token = sharedPreferences.getString("token", "");
+
+        //переместить в конструктор класса LibraryMaps
+        SharedPreferences pref = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
+        libraryMaps.task_types = (HashMap<String, String>) pref.getAll();
+        SharedPreferences pref1 = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
+        libraryMaps.user_roles = (HashMap<String, String>) pref1.getAll();
+        SharedPreferences pref2 = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
+        libraryMaps.user_roles_editable = (HashMap<String, String>) pref2.getAll();
+        SharedPreferences pref3 = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
+        libraryMaps.implementer = (HashMap<String, String>) pref3.getAll();
+        SharedPreferences pref4 = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
+        libraryMaps.status = (HashMap<String, String>) pref4.getAll();
+        SharedPreferences pref5 = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
+        libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
+
 
         toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
@@ -99,12 +119,15 @@ public class TasksActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
-                TextView task = view.findViewById(R.id.item_name);
-                TextView comments = view.findViewById(R.id.item_comment);
-                TextView date = view.findViewById(R.id.item_date);
+//                TextView task = view.findViewById(R.id.item_name);
+//                TextView comments = view.findViewById(R.id.item_comment);
+//                TextView date = view.findViewById(R.id.item_date);
+
+                ExpListGroup elg = groups.get(parentPosition);
+                TaskBodyObject tbo = elg.items.get(childPosition);
 
                 Intent intent = new Intent(getBaseContext(), TasksStructure.class);
-                intent.putExtra("image", R.drawable.baseline_circle_24);
+//                intent.putExtra("image", tbo.priority);
                 intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
                 startActivity(intent);
 
@@ -117,9 +140,9 @@ public class TasksActivity extends AppCompatActivity {
 
 
     private ArrayList<ExpListGroup> initData() {
-        ExpListGroup firstGroup = new ExpListGroup("Приемка груза от поставщика");
-        ExpListGroup secondGroup = new ExpListGroup("Сборка заказа");
-        ExpListGroup thirdGroup = new ExpListGroup("Сборка возврата");
+//        ExpListGroup firstGroup = new ExpListGroup();
+//        ExpListGroup secondGroup = new ExpListGroup();
+//        ExpListGroup thirdGroup = new ExpListGroup();
 
         ObjectMapper objectMapper = new ObjectMapper();
         TaskObject taskObject = new TaskObject();
@@ -149,7 +172,7 @@ public class TasksActivity extends AppCompatActivity {
                             .addHeader("Authorization", "Bearer " + token)
                             .build();
                     Response response = client.newCall(request).execute();
-                    int s = response.code();
+//                    int s = response.code();
                     if (response.code() == 401) {
                         Intent intent = new Intent(TasksActivity.this, AuthorizationActivity.class);
                         startActivity(intent);
@@ -186,6 +209,14 @@ public class TasksActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        ArrayList<ExpListGroup> allGroups = new ArrayList<>();
+
+        for (String s : libraryMaps.task_types.keySet()) {
+            ExpListGroup elg = new ExpListGroup(s);
+            elg.elgTaskTypeToShow = libraryMaps.task_types.get(s);
+            allGroups.add(elg);
+        }
+
 
         for (int i = 0; i < listOfTasks.size(); i++) {
 
@@ -205,28 +236,48 @@ public class TasksActivity extends AppCompatActivity {
 //            }
 
 
-            tbo = listOfTasks.get(i);
+            TaskBodyObject tbo = listOfTasks.get(i);
 
-            taskItem.setText(tbo.title);
-            dateItem.setText(tbo.finish_at);
-            commentsItem.setText(tbo.description);
-
-            if (tbo.priority.equals("high")) {
-                priorityItem.setImageResource(R.drawable.baseline_circle_24);
+            for (ExpListGroup elg : allGroups) {
+                if (tbo.type.equals(elg.elgTaskType)) {
+                    elg.items.add(tbo);
+                }
             }
 
-            if (tbo.type.equals("custom")) {
-                firstGroup.items.add(tbo);
-                firstGroup.text = firstGroup.text + " (" + firstGroup.items.size() + ")";
-            }
 
+//            if (tbo.type.equals("custom")) {
+//                firstGroup.items.add(tbo);
+//            }
         }
 
-        ArrayList<ExpListGroup> allGroups = new ArrayList<>();
-        allGroups.add(firstGroup);
-        allGroups.add(secondGroup);
-        allGroups.add(thirdGroup);
+//        for (ExpListGroup elg: allGroups) {
+//            elg.elgTaskTypeToShow = elg.elgTaskTypeToShow + " (" + elg.items.size() + ")";
+//        }
+
+        try {
+            Iterator<ExpListGroup> iterator = allGroups.iterator();
+            while (iterator.hasNext()) {
+                ExpListGroup element = iterator.next();
+                if (element.items.size() == 0) {
+                    iterator.remove();
+                } else {
+                    element.elgTaskTypeToShow = element.elgTaskTypeToShow.substring(0, 1).toUpperCase()
+                            + element.elgTaskTypeToShow.substring(1) + " (" + element.items.size() + ")";
+                }
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+
+
+//        firstGroup.text = firstGroup.text + " (" + firstGroup.items.size() + ")";
+
+//        ArrayList<ExpListGroup> allGroups = new ArrayList<>();
+//        allGroups.add(firstGroup);
+//        allGroups.add(secondGroup);
+//        allGroups.add(thirdGroup);
 
         return allGroups;
     }
+
 }

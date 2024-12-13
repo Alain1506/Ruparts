@@ -74,7 +74,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView task = view.findViewById(R.id.lbListHeader);
 
-        String newTask = elg.text;
+        String newTask = elg.elgTaskTypeToShow;
         task.setText(newTask);
 
         return view;
@@ -86,40 +86,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             view = inflater.inflate(R.layout.list_item, null);
         }
 
-//        String child = (String) getChild(parentPosition, childPosition);
-//        String group = getGroup(parentPosition).toString();
-
-//        ExpListItem eli = (ExpListItem) getChild(parentPosition, childPosition);
         TaskBodyObject tbo = (TaskBodyObject) getChild(parentPosition, childPosition);
-
-//        ImageView eliPriority = view.findViewById(R.id.item_priority);
-//        TextView eliName = view.findViewById(R.id.item_name);
-//        TextView eliComment = view.findViewById(R.id.item_comment);
-//        TextView eliDate = view.findViewById(R.id.item_date);
 
         ImageView tboPriority = view.findViewById(R.id.item_priority);
         TextView tboName = view.findViewById(R.id.item_name);
         TextView tboComment = view.findViewById(R.id.item_comment);
         TextView tboDate = view.findViewById(R.id.item_date);
 
-//        String newPriority = eli.priority;
-//        String newName = eli.task;
-//        String newComment = eli.comments;
-//        String newDate = eli.date;
+        tboName.setText(tbo.title);
+        tboDate.setText(tbo.finish_at);
+        tboComment.setText(tbo.description);
 
-        String newPriority = tbo.priority;
-        String newName = tbo.title;
-        String newComment = tbo.description;
-        String newDate = tbo.finish_at;
-
-//        eliPriority;
-//        eliName.setText(newName);
-//        eliComment.setText(newComment);
-//        eliDate.setText(newDate);
-
-        tboName.setText(newName);
-        tboComment.setText(newComment);
-        tboDate.setText(newDate);
+        switch (tbo.priority) {
+            case  ("high"):
+                tboPriority.setImageResource(R.drawable.baseline_circle_24);
+                break;
+            case ("low"):
+                tboPriority.setImageResource(R.drawable.baseline_circle_24_yellow);
+                break;
+            default:
+                tboPriority.setImageResource(R.drawable.ic_house_foreground);
+                break;
+        }
 
         return view;
     }
