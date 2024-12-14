@@ -36,14 +36,14 @@
             android:layout_height="wrap_content"
             android:text="Тип"
             android:textColor="@color/gray"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center_vertical"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/type_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center_vertical"
             android:text="Сборка заказа"
             android:textSize="18sp" />
     </LinearLayout>
@@ -135,13 +135,13 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"/>
 
-                <TextView
-                    android:id="@+id/priority_view"
-                    android:layout_width="wrap_content"
+                <Spinner
+                    android:id="@+id/priority_spinner"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Приоритет"
                     android:textSize="16sp"
-                    android:layout_gravity="center_vertical"/>
+                    android:background="@null"
+                    android:entries="@array/priorities" />
 
             </LinearLayout>
 
@@ -167,7 +167,7 @@
         >
 
         <LinearLayout
-            android:id="@+id/employee_layout"
+            android:id="@+id/implementer_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -214,13 +214,12 @@
                 android:layout_gravity="center"
 
                 android:background="@drawable/border_layout_search"
-                android:clickable="false"
+                android:onClick="setDate"
                 android:cursorVisible="false"
                 android:ems="10"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
 
-                android:hint="DD.MM.YYYY"
                 android:inputType="date" />
 
         </LinearLayout>
@@ -402,7 +401,7 @@
             android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/button_save"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
@@ -420,7 +419,7 @@
             android:paddingHorizontal="7dp"/>
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/button_in_work"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_weight="1"

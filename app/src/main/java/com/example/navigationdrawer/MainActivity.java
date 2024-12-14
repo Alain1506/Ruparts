@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private String token;
     private Button logout;
-    LinearLayout llTop;
     SharedPreferences sharedPreferences;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +62,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
         }
 
-
         toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle("Главная страница");
 
         drawerLayout = findViewById(R.id.main);
-//        llTop = findViewById(R.id.ll_top);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 
@@ -82,34 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         logout = vv.findViewById(R.id.logout_button);
-
-//        logout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                builder.setTitle("Exit");
-//                builder.setMessage("Do you want to exit ??");
-//                builder.setPositiveButton("Yes. Exit now!", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        SharedPreferences.Editor editor = sharedPreferences.edit();
-//                        editor.clear();
-//                        editor.apply();
-//                        token = "";
-//                        finish();
-//                    }
-//                });
-//                builder.setNegativeButton("Not now", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        dialogInterface.dismiss();
-//                    }
-//                });
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-//
-//            }
-//        });
 
     }
 
@@ -135,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 editor.clear();
                 editor.apply();
                 token = "";
-                finish();
+                startActivity(new Intent(MainActivity.this, AuthorizationActivity.class));
             }
         });
         builder.setNegativeButton("НЕТ!", new DialogInterface.OnClickListener() {

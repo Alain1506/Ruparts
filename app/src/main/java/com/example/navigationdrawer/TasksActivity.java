@@ -1,13 +1,10 @@
 package com.example.navigationdrawer;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,14 +14,13 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.navigationdrawer.helperclasses.LibraryMaps;
 import com.example.navigationdrawer.helperclasses.TaskBodyObject;
-import com.example.navigationdrawer.helperclasses.TaskObject;
+import com.example.navigationdrawer.helperclasses.TaskObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
@@ -35,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -44,18 +42,10 @@ import okhttp3.Response;
 
 public class TasksActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private ExpandableListView listView;
-    private Button btn;
-    private String token;
     private List<TaskBodyObject> listOfTasks = new ArrayList<>();
-//    private TaskBodyObject tbo;
+    public static Map<Integer, TaskBodyObject> mapOfTasks = new HashMap<>();
 
-    private ImageView priorityItem;
-    private TextView taskItem;
-    private TextView commentsItem;
-    private TextView dateItem;
-
+    public static String token;
     public static LibraryMaps libraryMaps = new LibraryMaps();
 
 
@@ -79,36 +69,22 @@ public class TasksActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         token = sharedPreferences.getString("token", "");
 
-        //переместить в конструктор класса LibraryMaps
-        SharedPreferences pref = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
-        libraryMaps.task_types = (HashMap<String, String>) pref.getAll();
-        SharedPreferences pref1 = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
-        libraryMaps.user_roles = (HashMap<String, String>) pref1.getAll();
-        SharedPreferences pref2 = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
-        libraryMaps.user_roles_editable = (HashMap<String, String>) pref2.getAll();
-        SharedPreferences pref3 = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
-        libraryMaps.implementer = (HashMap<String, String>) pref3.getAll();
-        SharedPreferences pref4 = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
-        libraryMaps.status = (HashMap<String, String>) pref4.getAll();
-        SharedPreferences pref5 = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
-        libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
+        createLibraryMaps();
 
-
-        toolbar = findViewById(R.id.my_toolbar);
+        Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Задачи");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        listView = findViewById(R.id.tasks_exp_list_view);
+        ExpandableListView listView = findViewById(R.id.tasks_exp_list_view);
 
-
-        priorityItem = vv.findViewById(R.id.item_priority);
-        taskItem = vv.findViewById(R.id.item_name);
-        commentsItem = vv.findViewById(R.id.item_comment);
-        dateItem = vv.findViewById(R.id.item_date);
+        ImageView priorityItem = vv.findViewById(R.id.item_priority);
+        TextView taskItem = vv.findViewById(R.id.item_name);
+        TextView commentsItem = vv.findViewById(R.id.item_comment);
+        TextView dateItem = vv.findViewById(R.id.item_date);
 
         ArrayList<ExpListGroup> groups = initData();
 
@@ -119,33 +95,22 @@ public class TasksActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
-//                TextView task = view.findViewById(R.id.item_name);
-//                TextView comments = view.findViewById(R.id.item_comment);
-//                TextView date = view.findViewById(R.id.item_date);
-
                 ExpListGroup elg = groups.get(parentPosition);
                 TaskBodyObject tbo = elg.items.get(childPosition);
 
                 Intent intent = new Intent(getBaseContext(), TasksStructure.class);
-//                intent.putExtra("image", tbo.priority);
                 intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
                 startActivity(intent);
 
                 return false;
             }
         });
-
-
     }
 
-
     private ArrayList<ExpListGroup> initData() {
-//        ExpListGroup firstGroup = new ExpListGroup();
-//        ExpListGroup secondGroup = new ExpListGroup();
-//        ExpListGroup thirdGroup = new ExpListGroup();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        TaskObject taskObject = new TaskObject();
+        TaskObjectRequest taskObject = new TaskObjectRequest();
         taskObject.action = "app.task.list";
         taskObject.id = "325ege324ll23el42uicc";
 
@@ -164,7 +129,7 @@ public class TasksActivity extends AppCompatActivity {
                 try {
                     OkHttpClient client = new OkHttpClient().newBuilder().build();
                     MediaType mediaType = MediaType.parse("application/json");
-                    RequestBody body = RequestBody.create(taskObjectAsString.toString(), mediaType);
+                    RequestBody body = RequestBody.create(taskObjectAsString, mediaType);
                     Request request = new Request.Builder()
                             .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
                             .method("POST", body)
@@ -172,17 +137,17 @@ public class TasksActivity extends AppCompatActivity {
                             .addHeader("Authorization", "Bearer " + token)
                             .build();
                     Response response = client.newCall(request).execute();
-//                    int s = response.code();
                     if (response.code() == 401) {
                         Intent intent = new Intent(TasksActivity.this, AuthorizationActivity.class);
                         startActivity(intent);
                         Toast.makeText(TasksActivity.this, "Токен устарел", Toast.LENGTH_LONG).show();
                     } else if (response.code() != 200) {
-                        String string = response.body().string();
+//                        String string = response.body().string();
                         Toast.makeText(TasksActivity.this, "Произошла ошибка загрузки задач", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
                         startActivity(intent);
                     }
+                    assert response.body() != null;
                     String responseString = response.body().string();
                     jsonObject[0] = new JSONObject(responseString);
 
@@ -192,11 +157,15 @@ public class TasksActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
 
-//                    String sss = jsonObject[0].getJSONObject("data").getJSONArray("list").getJSONObject(0).toString();//json конкретной задачи, строка для конвертации в объект
                     String jsonListOfTasks = jsonObject[0].getJSONObject("data").getJSONArray("list").toString();
 
                     listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,
                             TaskBodyObject.class));
+
+                    for (TaskBodyObject tbo: listOfTasks) {
+                        mapOfTasks.put(tbo.tbdo_id, tbo);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -217,25 +186,7 @@ public class TasksActivity extends AppCompatActivity {
             allGroups.add(elg);
         }
 
-
         for (int i = 0; i < listOfTasks.size(); i++) {
-
-//            item = new ExpListItem(listOfTasks.get(i).title, listOfTasks.get(i).description, listOfTasks.get(i).finish_at);
-//
-//            taskItem.setText(item.getTask());
-//            dateItem.setText(item.getDate());
-//            commentsItem.setText(item.getComments());
-//
-//            if (listOfTasks.get(i).priority.equals("high")) {
-//                priorityItem.setImageResource(R.drawable.baseline_circle_24);
-//            }
-//
-//            if (listOfTasks.get(i).type.equals("custom")) {
-//                firstGroup.items.add(item);
-//                firstGroup.text = firstGroup.text + " (" + firstGroup.items.size() + ")";
-//            }
-
-
             TaskBodyObject tbo = listOfTasks.get(i);
 
             for (ExpListGroup elg : allGroups) {
@@ -243,41 +194,35 @@ public class TasksActivity extends AppCompatActivity {
                     elg.items.add(tbo);
                 }
             }
-
-
-//            if (tbo.type.equals("custom")) {
-//                firstGroup.items.add(tbo);
-//            }
         }
 
-//        for (ExpListGroup elg: allGroups) {
-//            elg.elgTaskTypeToShow = elg.elgTaskTypeToShow + " (" + elg.items.size() + ")";
-//        }
-
-        try {
-            Iterator<ExpListGroup> iterator = allGroups.iterator();
-            while (iterator.hasNext()) {
-                ExpListGroup element = iterator.next();
-                if (element.items.size() == 0) {
-                    iterator.remove();
-                } else {
-                    element.elgTaskTypeToShow = element.elgTaskTypeToShow.substring(0, 1).toUpperCase()
-                            + element.elgTaskTypeToShow.substring(1) + " (" + element.items.size() + ")";
-                }
+        Iterator<ExpListGroup> iterator = allGroups.iterator();
+        while (iterator.hasNext()) {
+            ExpListGroup element = iterator.next();
+            if (element.items.isEmpty()) {
+                iterator.remove();
+            } else {
+                element.elgTaskTypeToShow = element.elgTaskTypeToShow.substring(0, 1).toUpperCase()
+                        + element.elgTaskTypeToShow.substring(1) + " (" + element.items.size() + ")";
             }
-        } catch (Exception e) {
-            e.getMessage();
         }
-
-
-//        firstGroup.text = firstGroup.text + " (" + firstGroup.items.size() + ")";
-
-//        ArrayList<ExpListGroup> allGroups = new ArrayList<>();
-//        allGroups.add(firstGroup);
-//        allGroups.add(secondGroup);
-//        allGroups.add(thirdGroup);
 
         return allGroups;
+    }
+
+    public void createLibraryMaps() {
+        SharedPreferences pref = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
+        libraryMaps.task_types = (HashMap<String, String>) pref.getAll();
+        SharedPreferences pref1 = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
+        libraryMaps.user_roles = (HashMap<String, String>) pref1.getAll();
+        SharedPreferences pref2 = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
+        libraryMaps.user_roles_editable = (HashMap<String, String>) pref2.getAll();
+        SharedPreferences pref3 = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
+        libraryMaps.implementer = (HashMap<String, String>) pref3.getAll();
+        SharedPreferences pref4 = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
+        libraryMaps.status = (HashMap<String, String>) pref4.getAll();
+        SharedPreferences pref5 = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
+        libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
     }
 
 }

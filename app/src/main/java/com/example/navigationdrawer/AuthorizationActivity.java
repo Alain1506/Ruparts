@@ -39,26 +39,10 @@ import okhttp3.Response;
 
 public class AuthorizationActivity extends AppCompatActivity {
 
-    private Button button1;
-    private Button button2;
-    private Button button3;
-    private Button button4;
-    private Button button5;
-    private Button button6;
-    private Button button7;
-    private Button button8;
-    private Button button9;
-    private Button button0;
-
-
-
-    private Button cancelButton;
-    private Button backButton;
     private EditText password;
     private String createPassword;
     private String token;
     private AuthorizationMap map;
-
 
 
     @SuppressLint("MissingInflatedId")
@@ -73,18 +57,18 @@ public class AuthorizationActivity extends AppCompatActivity {
             return insets;
         });
 
-        button1 = findViewById(R.id.btn_1);
-        button2 = findViewById(R.id.btn_2);
-        button3 = findViewById(R.id.btn_3);
-        button4 = findViewById(R.id.btn_4);
-        button5 = findViewById(R.id.btn_5);
-        button6 = findViewById(R.id.btn_6);
-        button7 = findViewById(R.id.btn_7);
-        button8 = findViewById(R.id.btn_8);
-        button9 = findViewById(R.id.btn_9);
-        button0 = findViewById(R.id.btn_0);
-        cancelButton = findViewById(R.id.btn_cancel);
-        backButton = findViewById(R.id.btn_backspace);
+        Button button1 = findViewById(R.id.btn_1);
+        Button button2 = findViewById(R.id.btn_2);
+        Button button3 = findViewById(R.id.btn_3);
+        Button button4 = findViewById(R.id.btn_4);
+        Button button5 = findViewById(R.id.btn_5);
+        Button button6 = findViewById(R.id.btn_6);
+        Button button7 = findViewById(R.id.btn_7);
+        Button button8 = findViewById(R.id.btn_8);
+        Button button9 = findViewById(R.id.btn_9);
+        Button button0 = findViewById(R.id.btn_0);
+        Button cancelButton = findViewById(R.id.btn_cancel);
+        Button backButton = findViewById(R.id.btn_backspace);
         password = findViewById(R.id.password_layout);
 
         createPassword = "";
@@ -96,7 +80,7 @@ public class AuthorizationActivity extends AppCompatActivity {
 
         for (int i = 0; i < buttons0to9.length; i++) {
             int number = i;
-            buttons0to9[i].setOnClickListener(new View.OnClickListener() {
+            buttons0to9[number].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     createPassword += String.valueOf(number);
@@ -104,86 +88,6 @@ public class AuthorizationActivity extends AppCompatActivity {
                 }
             });
         }
-
-//        button1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "1";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "2";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "3";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "4";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "5";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "6";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button7.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "7";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button8.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "8";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button9.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "9";
-//                password.setText(createPassword);
-//            }
-//        });
-//
-//        button0.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createPassword += "0";
-//                password.setText(createPassword);
-//            }
-//        });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,6 +137,7 @@ public class AuthorizationActivity extends AppCompatActivity {
                                         Intent intent = new Intent(AuthorizationActivity.this, AuthorizationActivity.class);
                                         startActivity(intent);
                                     }
+                                    assert response.body() != null;
                                     String responseString = response.body().string();
                                     JSONObject jsonObject = new JSONObject(responseString);
                                     token = jsonObject.getString("token");
@@ -281,7 +186,7 @@ public class AuthorizationActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient().newBuilder()
                             .build();
                     MediaType mediaType = MediaType.parse("application/json");
-                    RequestBody body = RequestBody.create(mapsRequest.toString(), mediaType);
+                    RequestBody body = RequestBody.create(mapsRequest, mediaType);
                     Request request = new Request.Builder()
                             .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
                             .method("POST", body)
@@ -294,8 +199,8 @@ public class AuthorizationActivity extends AppCompatActivity {
                         Intent intent = new Intent(AuthorizationActivity.this, AuthorizationActivity.class);
                         startActivity(intent);
                     }
+                    assert response.body() != null;
                     String responseString = response.body().string();
-//                    JSONObject jsonObject = new JSONObject(responseString);
 
                     jsonObject[0] = new JSONObject(responseString);
 
@@ -354,15 +259,6 @@ public class AuthorizationActivity extends AppCompatActivity {
                     }
                     libraryIdReferenceTypeEditor.commit();
 
-//                    SharedPreferences pref = getContext().getSharedPreferences("Your_Shared_Prefs", Context.MODE_PRIVATE);
-//                    HashMap<String, Integer> map= (HashMap<String, Integer>) pref.getAll();
-//                    for (String s : map.keySet()) {
-//                        Integer value=map.get(s);
-//                        //Use Value
-//                    }
-
-                    Intent intent = new Intent(AuthorizationActivity.this, MainActivity.class);
-                    startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

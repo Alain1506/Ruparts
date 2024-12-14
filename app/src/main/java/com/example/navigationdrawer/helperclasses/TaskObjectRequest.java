@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TaskObject {
+public class TaskObjectRequest {
     @JsonProperty("id")
     public String id;
     @JsonProperty("action")
@@ -14,7 +14,7 @@ public class TaskObject {
     @JsonProperty("data")
     public TaskDataObject dataObject;
 
-    public TaskObject() {
+    public TaskObjectRequest() {
         dataObject = new TaskDataObject();
     }
 

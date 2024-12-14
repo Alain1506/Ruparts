@@ -7,4 +7,10 @@
     <string name="title_activity_tasks_fragments">TasksFragments</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+
+    <string-array name="priorities">
+        <item>Высокий</item>
+        <item>Низкий</item>
+    </string-array>
+
 </resources>

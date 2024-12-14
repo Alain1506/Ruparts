@@ -1,5 +1,9 @@
 package com.example.navigationdrawer.helperclasses;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
@@ -18,6 +22,5 @@ public class LibraryMaps {
     public HashMap<String, String> status = new HashMap<>();
     @JsonProperty("id_reference_type")
     public HashMap<String, String> id_reference_type = new HashMap<>();
-
 
 }
