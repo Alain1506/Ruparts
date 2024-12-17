@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -97,7 +98,7 @@ public class TasksStructure extends AppCompatActivity {
 
         Bundle arguments = getIntent().getExtras();
 
-        if(arguments != null){
+        if (arguments != null) {
 
             tbo = (TaskBodyObject) arguments.getSerializable(TaskBodyObject.class.getSimpleName());
 
@@ -106,7 +107,7 @@ public class TasksStructure extends AppCompatActivity {
             data.setText(tbo.finish_at);
 
             switch (tbo.priority) {
-                case  ("high"):
+                case ("high"):
                     priority.setImageResource(R.drawable.baseline_circle_24);
                     spinner.setSelection(0);
                     break;
@@ -143,6 +144,7 @@ public class TasksStructure extends AppCompatActivity {
                             break;
                     }
                 }
+
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             });
@@ -167,20 +169,20 @@ public class TasksStructure extends AppCompatActivity {
                 }
                 final JSONObject[] jsonObject = {null};
 
-                Thread thread = new Thread (new Runnable() {
+                Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                        OkHttpClient client = new OkHttpClient().newBuilder()
-                                .build();
-                        MediaType mediaType = MediaType.parse("application/json");
-                        RequestBody body = RequestBody.create(updateObjectAsString, mediaType);
-                        Request request = new Request.Builder()
-                                .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-                                .method("POST", body)
-                                .addHeader("Content-Type", "application/json")
-                                .addHeader("Authorization", "Bearer " + token)
-                                .build();
+                            OkHttpClient client = new OkHttpClient().newBuilder()
+                                    .build();
+                            MediaType mediaType = MediaType.parse("application/json");
+                            RequestBody body = RequestBody.create(updateObjectAsString, mediaType);
+                            Request request = new Request.Builder()
+                                    .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
+                                    .method("POST", body)
+                                    .addHeader("Content-Type", "application/json")
+                                    .addHeader("Authorization", "Bearer " + token)
+                                    .build();
                             Response response = client.newCall(request).execute();
                             if (response.code() != 200) {
                                 Toast.makeText(TasksStructure.this, "Невозможно скорректировать задачу", Toast.LENGTH_LONG).show();
@@ -216,13 +218,23 @@ public class TasksStructure extends AppCompatActivity {
 
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
             changeableDate.set(Calendar.YEAR, year);
             changeableDate.set(Calendar.MONTH, monthOfYear);
             changeableDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            String formatted = format.format(changeableDate.getTime());
-            data.setText(formatted);
-            tbo.finish_at = formatted;
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, -1);
+            Date yesterday = calendar.getTime();
+
+            if (changeableDate.getTime().after(yesterday)) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                String formatted = format.format(changeableDate.getTime());
+                data.setText(formatted);
+                tbo.finish_at = formatted;
+            } else {
+                Toast.makeText(TasksStructure.this, "Эта дата уже прошла", Toast.LENGTH_LONG).show();
+            }
         }
     };
 
