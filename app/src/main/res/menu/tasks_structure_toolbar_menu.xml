@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:icon="@drawable/baseline_history_24"
+        android:id="@+id/task_activity_history"
+        android:title="История"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:icon="@drawable/baseline_cancel_24"
+        android:id="@+id/task_activity_cancel"
+        android:title="Отклонить"
+        
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="never"
+        />
+
+</menu>

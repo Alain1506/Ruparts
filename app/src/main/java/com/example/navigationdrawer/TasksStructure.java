@@ -7,22 +7,21 @@ import static com.example.navigationdrawer.TasksActivity.token;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -32,6 +31,7 @@ import com.example.navigationdrawer.helperclasses.TaskBodyObject;
 import com.example.navigationdrawer.helperclasses.TaskStatusRequest;
 import com.example.navigationdrawer.helperclasses.TaskUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
@@ -60,12 +60,12 @@ public class TasksStructure extends AppCompatActivity {
     TextView taskStatus;
     TextView taskCreatedDate;
     TextView taskImplementer;
-    Spinner spinner;
     Calendar changeableDate = Calendar.getInstance();
     Button btnSave;
     MaterialButton btnInWork;
     MaterialButton btnCancelled;
     LinearLayout threeButtonsLayout;
+    TextView changeablePrioriry;
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -99,14 +99,7 @@ public class TasksStructure extends AppCompatActivity {
             btnCancelled = findViewById(R.id.button_cancel);
             int cancelImage = R.drawable.baseline_cancel_24;
             btnCancelled.setCompoundDrawablesWithIntrinsicBounds(cancelImage, 0, 0, 0);
-
-            spinner = findViewById(R.id.priority_spinner);
-            ArrayAdapter<?> adapter =
-                    ArrayAdapter.createFromResource(this, R.array.priorities,
-                            android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            changeablePrioriry = findViewById(R.id.priority_material_button);
 
             Bundle arguments = getIntent().getExtras();
 
@@ -121,11 +114,11 @@ public class TasksStructure extends AppCompatActivity {
                 switch (tbo.priority) {
                     case ("high"):
                         priority.setImageResource(R.drawable.baseline_circle_24);
-                        spinner.setSelection(0);
+                        changeablePrioriry.setText("Высокий");
                         break;
                     case ("low"):
                         priority.setImageResource(R.drawable.baseline_circle_24_yellow);
-                        spinner.setSelection(1);
+                        changeablePrioriry.setText("Низкий");
                         break;
                     default:
                         priority.setImageResource(R.drawable.ic_house_foreground);
@@ -145,34 +138,49 @@ public class TasksStructure extends AppCompatActivity {
                     btnInWork.setText("Закрыть");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                 } else {
-                    btnInWork.setVisibility(View.INVISIBLE);
+                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(0,1).toUpperCase()
+                            + Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(1);
+                    btnInWork.setText(textForButton);
+                    btnInWork.setBackgroundColor(getResources().getColor(R.color.white));
+                    btnInWork.setTextColor(getResources().getColor(R.color.gray));
+                    btnInWork.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     btnCancelled.setVisibility(View.INVISIBLE);
                 }
-
-
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    public void onItemSelected(AdapterView<?> parent,
-                                               View itemSelected, int selectedItemPosition, long selectedId) {
-
-                        switch (selectedItemPosition) {
-                            case (0):
-                                priority.setImageResource(R.drawable.baseline_circle_24);
-                                tbo.priority = "high";
-                                break;
-                            case (1):
-                                priority.setImageResource(R.drawable.baseline_circle_24_yellow);
-                                tbo.priority = "low";
-                                break;
-                            default:
-                                priority.setImageResource(R.drawable.ic_house_foreground);
-                                break;
-                        }
-                    }
-
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
             }
+
+            changeablePrioriry.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TasksStructure.this);
+                    @SuppressLint("InflateParams") View view1 = LayoutInflater.from(TasksStructure.this).inflate(R.layout.task_structure_bottom_sheet,null);
+                    bottomSheetDialog.setContentView(view1);
+                    bottomSheetDialog.show();
+
+                    TextView high = view1.findViewById(R.id.ts_status_high);
+                    TextView low = view1.findViewById(R.id.ts_status_low);
+
+                    high.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            changeablePrioriry.setText("Высокий");
+                            priority.setImageResource(R.drawable.baseline_circle_24);
+                            tbo.priority = "high";
+                            saveChanges(tbo);
+                            bottomSheetDialog.dismiss();
+                        }
+                    });
+                    low.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            changeablePrioriry.setText("Низкий");
+                            priority.setImageResource(R.drawable.baseline_circle_24_yellow);
+                            tbo.priority = "low";
+                            saveChanges(tbo);
+                            bottomSheetDialog.dismiss();
+                        }
+                    });
+                }
+            });
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -194,12 +202,18 @@ public class TasksStructure extends AppCompatActivity {
                         btnInWork.setText("Закрыть");
                         btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                         saveChanges(tbo);
+
                     } else if (tbo.status.equals("in_progress")) {
                         tbo.status = "closed";
                         changeTaskStatus(tbo);
                         refreshData(tbo);
-                        btnInWork.setVisibility(View.INVISIBLE);
                         btnCancelled.setVisibility(View.INVISIBLE);
+                        String textForButton = Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(0,1).toUpperCase()
+                                + Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(1);
+                        btnInWork.setText(textForButton);
+                        btnInWork.setTextColor(getResources().getColor(R.color.gray));
+                        btnInWork.setBackgroundColor(getResources().getColor(R.color.white));
+                        btnInWork.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                         saveChanges(tbo);
                     }
                 }
@@ -211,7 +225,12 @@ public class TasksStructure extends AppCompatActivity {
                     tbo.status = "canceled";
                     changeTaskStatus(tbo);
                     refreshData(tbo);
-                    btnInWork.setVisibility(View.INVISIBLE);
+                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(0,1).toUpperCase()
+                            + Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(1);
+                    btnInWork.setText(textForButton);
+                    btnInWork.setTextColor(getResources().getColor(R.color.gray));
+                    btnInWork.setBackgroundColor(getResources().getColor(R.color.white));
+                    btnInWork.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     btnCancelled.setVisibility(View.INVISIBLE);
                     saveChanges(tbo);
                 }
@@ -223,54 +242,60 @@ public class TasksStructure extends AppCompatActivity {
     }
 
     public void saveChanges(TaskBodyObject tbo) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        TaskUpdateRequest tur = new TaskUpdateRequest(tbo);
-        tur.action = "app.task.update";
-        tur.id = "325ege324ll23el42uicc";
-
-        final String updateObjectAsString;
         try {
-            updateObjectAsString = objectMapper.writeValueAsString(tur);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        final JSONObject[] jsonObject = {null};
+            ObjectMapper objectMapper = new ObjectMapper();
+            TaskUpdateRequest tur = new TaskUpdateRequest(tbo);
+            tur.action = "app.task.update";
+            tur.id = "325ege324ll23el42uicc";
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client = new OkHttpClient().newBuilder()
-                            .build();
-                    MediaType mediaType = MediaType.parse("application/json");
-                    RequestBody body = RequestBody.create(updateObjectAsString, mediaType);
-                    Request request = new Request.Builder()
-                            .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-                            .method("POST", body)
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("Authorization", "Bearer " + token)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    if (response.code() != 200) {
-                        Toast.makeText(TasksStructure.this, "Невозможно скорректировать задачу", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(TasksStructure.this, TasksStructure.class);
-                        startActivity(intent);
-                    }
-                    assert response.body() != null;
-                    String responseString = response.body().string();
-                    jsonObject[0] = new JSONObject(responseString);
-                    String task = jsonObject[0].getJSONObject("data").toString();
-
-                    TaskBodyObject newTask = objectMapper.readValue(task, TaskBodyObject.class);
-                    mapOfTasks.put(newTask.tbdo_id, newTask);
-
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            final String updateObjectAsString;
+            try {
+                updateObjectAsString = objectMapper.writeValueAsString(tur);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        });
-        thread.start();
+            final JSONObject[] jsonObject = {null};
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        OkHttpClient client = new OkHttpClient().newBuilder()
+                                .build();
+                        MediaType mediaType = MediaType.parse("application/json");
+                        RequestBody body = RequestBody.create(updateObjectAsString, mediaType);
+                        Request request = new Request.Builder()
+                                .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
+                                .method("POST", body)
+                                .addHeader("Content-Type", "application/json")
+                                .addHeader("Authorization", "Bearer " + token)
+                                .build();
+                        Response response = client.newCall(request).execute();
+                        if (response.code() != 200) {
+                            Toast.makeText(TasksStructure.this, "Невозможно скорректировать задачу", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(TasksStructure.this, TasksStructure.class);
+                            startActivity(intent);
+                        }
+                        assert response.body() != null;
+                        String responseString = response.body().string();
+                        jsonObject[0] = new JSONObject(responseString);
+                        String task = jsonObject[0].getJSONObject("data").toString();
+
+                        TaskBodyObject newTask = objectMapper.readValue(task, TaskBodyObject.class);
+                        mapOfTasks.put(newTask.tbdo_id, newTask);
+
+//                        Intent intent = new Intent(TasksStructure.this, TasksActivity.class);
+//                        startActivity(intent);
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            thread.start();
+        } catch (Throwable e) {
+            e.getMessage();
+        }
     }
 
     public void changeTaskStatus(TaskBodyObject tbo) {
@@ -343,7 +368,7 @@ public class TasksStructure extends AppCompatActivity {
             Date yesterday = calendar.getTime();
 
             if (changeableDate.getTime().after(yesterday)) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 String formatted = format.format(changeableDate.getTime());
                 data.setText(formatted);
                 tbo.finish_at = formatted;
@@ -355,6 +380,17 @@ public class TasksStructure extends AppCompatActivity {
 
     public void refreshData(TaskBodyObject tbo) {
         taskStatus.setText(libraryMaps.status.get(tbo.status));
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tasks_structure_toolbar_menu, menu);
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
+        return true;
     }
 
 }

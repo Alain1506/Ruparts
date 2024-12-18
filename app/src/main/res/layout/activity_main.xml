@@ -23,7 +23,7 @@
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
-        android:layout_width="400dp"
+        android:layout_width="330dp"
         android:layout_height="match_parent"
         android:id="@+id/navigation_view"
         android:layout_gravity="start"

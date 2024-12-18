@@ -26,73 +26,105 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/tasks_layout_buttons"
+<!--    <LinearLayout-->
+<!--        android:id="@+id/tasks_layout_buttons"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/tasks_toolbar_layout"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingHorizontal="10dp"-->
+<!--        android:weightSum="3"-->
+<!--        tools:ignore="ObsoleteLayoutParam">-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button_available"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:backgroundTint="@color/light_purple"-->
+<!--            android:paddingHorizontal="7dp"-->
+<!--            android:layout_margin="2dp"-->
+<!--            android:text="Доступные"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="15sp"-->
+<!--            app:cornerRadius="5dp"-->
+<!--            app:strokeWidth="1dp" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button_started"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:backgroundTint="@color/light_purple"-->
+<!--            android:paddingHorizontal="7dp"-->
+<!--            android:layout_margin="2dp"-->
+<!--            android:text="Начатые"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="15sp"-->
+<!--            app:cornerRadius="5dp"-->
+<!--            app:strokeWidth="1dp" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button_completed"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:backgroundTint="@color/light_purple"-->
+<!--            android:paddingHorizontal="7dp"-->
+<!--            android:layout_margin="2dp"-->
+<!--            android:text="Завершенные"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="15sp"-->
+<!--            app:cornerRadius="5dp"-->
+<!--            app:strokeWidth="1dp" />-->
+
+<!--    </LinearLayout>-->
+
+<!--    <SearchView-->
+<!--        android:id="@+id/tasks_search_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_below="@+id/tasks_layout_buttons"-->
+<!--        android:layout_marginHorizontal="12dp"-->
+<!--        android:background="@drawable/border_layout_search"-->
+<!--        android:queryBackground="@android:color/transparent"-->
+<!--        android:iconifiedByDefault="false"-->
+<!--        android:paddingHorizontal="-10dp"-->
+<!--        android:queryHint="поиск" />-->
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tasks_tablayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tasks_toolbar_layout"
-        android:orientation="horizontal"
-        android:paddingHorizontal="10dp"
-        android:weightSum="3"
-        tools:ignore="ObsoleteLayoutParam">
+        android:layout_height="60dp"
+        >
 
-        <Button
-            android:id="@+id/button_available"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/light_purple"
-            android:paddingHorizontal="7dp"
-            android:layout_margin="2dp"
-            android:text="Доступные"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:cornerRadius="5dp"
-            app:strokeWidth="1dp" />
+            android:text="Доступные" />
 
-        <Button
-            android:id="@+id/button_started"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/light_purple"
-            android:paddingHorizontal="7dp"
-            android:layout_margin="2dp"
-            android:text="Начатые"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:cornerRadius="5dp"
-            app:strokeWidth="1dp" />
+            android:text="Начатые" />
 
-        <Button
-            android:id="@+id/button_completed"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/light_purple"
-            android:paddingHorizontal="7dp"
-            android:layout_margin="2dp"
-            android:text="Завершенные"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:cornerRadius="5dp"
-            app:strokeWidth="1dp" />
+            android:text="Завершенные" />
 
-    </LinearLayout>
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Отмененные" />
 
-    <SearchView
-        android:id="@+id/tasks_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/tasks_layout_buttons"
-        android:layout_marginHorizontal="12dp"
-        android:background="@drawable/border_layout_search"
-        android:queryBackground="@android:color/transparent"
-        android:iconifiedByDefault="false"
-        android:paddingHorizontal="-10dp"
-        android:queryHint="поиск" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Все" />
 
-
+    </com.google.android.material.tabs.TabLayout>
 
     <ExpandableListView
         android:id="@+id/tasks_exp_list_view"

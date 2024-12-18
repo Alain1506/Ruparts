@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +26,7 @@ import com.example.navigationdrawer.helperclasses.TaskBodyObject;
 import com.example.navigationdrawer.helperclasses.TaskObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
 
@@ -85,6 +89,9 @@ public class TasksActivity extends AppCompatActivity {
         TextView taskItem = vv.findViewById(R.id.item_name);
         TextView commentsItem = vv.findViewById(R.id.item_comment);
         TextView dateItem = vv.findViewById(R.id.item_date);
+
+        TabLayout tabLayout = findViewById(R.id.tasks_tablayout);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         ArrayList<ExpListGroup> groups = initData();
 
@@ -225,4 +232,18 @@ public class TasksActivity extends AppCompatActivity {
         libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.tasks_activity_toolbar_search_menu, menu);
+        return true;
+    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        if (item.getItemId() == R.id.search_bar) {
+//            Toast.makeText(TasksActivity.this, "мпиарьо", Toast.LENGTH_LONG).show();
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }
