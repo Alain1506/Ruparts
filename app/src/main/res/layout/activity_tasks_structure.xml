@@ -212,14 +212,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-
                 android:background="@drawable/border_layout_search"
                 android:onClick="setDate"
                 android:cursorVisible="false"
                 android:ems="10"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-
                 android:inputType="date" />
 
         </LinearLayout>
@@ -372,13 +370,14 @@
 <!--    </LinearLayout>-->
 
     <LinearLayout
+        android:id="@+id/three_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:paddingHorizontal="12dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_cancel"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -388,11 +387,11 @@
             android:textSize="18sp"
             app:cornerRadius="5dp"
             app:strokeWidth="1dp"
-            app:icon="@drawable/baseline_cancel_24"
+            android:drawableStart="@drawable/baseline_cancel_24"
             app:iconGravity="textStart"
             app:iconSize="25dp"
             app:iconTint="@color/red"
-            android:paddingHorizontal="7dp"
+            android:paddingHorizontal="120dp"
             />
 
         <LinearLayout
@@ -418,7 +417,7 @@
             android:layout_marginEnd="2dp"
             android:paddingHorizontal="7dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_in_work"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
@@ -429,7 +428,7 @@
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:cornerRadius="5dp"
-                app:icon="@drawable/baseline_play_arrow_24"
+                android:drawableStart="@drawable/baseline_play_arrow_24"
                 app:iconGravity="textStart"
                 app:iconSize="30dp"
                 app:iconTint="@color/black"
