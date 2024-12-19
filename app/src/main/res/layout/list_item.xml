@@ -3,48 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/list_of_tasks"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_marginTop="2dp"
-    android:background="@drawable/border_layout_tasks"
-    android:layout_below="@+id/search_view">
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_for_task_layout_in_exp_list"
+    android:layout_below="@+id/search_view"
+    >
 
-    <ImageView
-        android:id="@+id/item_priority"
-        android:layout_width="20dp"
-        android:layout_height="40dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        app:srcCompat="@drawable/ic_house_foreground" />
-
-    <TextView
-        android:id="@+id/item_name"
+    <LinearLayout
+        android:id="@+id/ll_title"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_toRightOf="@id/item_priority"
-        android:gravity="center_vertical"
-        android:text="Приемка груза от поставщика 3412"
-        android:textSize="19dp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        >
+        <ImageView
+            android:id="@+id/item_priority"
+            android:layout_width="20dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            app:srcCompat="@drawable/baseline_circle_24" />
 
-    <TextView
-        android:id="@+id/item_comment"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/item_name"
-        android:layout_margin="5dp"
-        android:background="@color/light_purple"
-        android:text="Клиент: ООО Улитка"
-        android:textSize="15sp" />
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@id/item_priority"
+            android:gravity="center_vertical"
+            android:text="Приемка груза от поставщика 3412"
+            android:textSize="19dp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/item_date"
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_date"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@+id/item_name"
-        android:layout_margin="5dp"
-        android:layout_toEndOf="@+id/item_comment"
-        android:gravity="center_horizontal|bottom"
-        android:text="10 мар 2024"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_title"
+        android:layout_marginHorizontal="10dp"
+        >
+
+        <TextView
+            android:id="@+id/item_date"
+            android:layout_width="75dp"
+            android:layout_height="20dp"
+            android:text="10 мар 23"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            ></TextView>
+
+        <TextView
+            android:id="@+id/item_note"
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:text="осталось 2 дня"
+            android:gravity="center_horizontal"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            ></TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_date"
+        >
+
+        <TextView
+            android:id="@+id/item_comment"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_below="@+id/ll_date"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/border_for_task_layout_in_exp_list"
+            android:backgroundTint="@color/light_gray"
+            android:paddingHorizontal="10dp"
+            android:text="Клиент: ООО Улитка"
+            android:textSize="15sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

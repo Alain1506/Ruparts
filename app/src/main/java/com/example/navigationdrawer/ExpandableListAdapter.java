@@ -70,6 +70,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (view == null) {
             view = inflater.inflate(R.layout.list_group, null);
         }
+
         ExpListGroup elg = (ExpListGroup) getGroup(parentPosition);
 
         TextView task = view.findViewById(R.id.lbListHeader);
@@ -85,6 +86,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (view == null) {
             view = inflater.inflate(R.layout.list_item, null);
         }
+
 
         TaskBodyObject tbo = (TaskBodyObject) getChild(parentPosition, childPosition);
 
@@ -116,4 +118,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int parentPosition, int childPosition) {
         return true;
     }
+
+
 }

@@ -259,6 +259,7 @@ public class TasksStructure extends AppCompatActivity {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    Thread current = Thread.currentThread();
                     try {
                         OkHttpClient client = new OkHttpClient().newBuilder()
                                 .build();
@@ -279,16 +280,19 @@ public class TasksStructure extends AppCompatActivity {
                         assert response.body() != null;
                         String responseString = response.body().string();
                         jsonObject[0] = new JSONObject(responseString);
+
+                        if (jsonObject[0].getInt("type") != 0) {
+                            current.interrupt();
+                        }
+
                         String task = jsonObject[0].getJSONObject("data").toString();
 
                         TaskBodyObject newTask = objectMapper.readValue(task, TaskBodyObject.class);
                         mapOfTasks.put(newTask.tbdo_id, newTask);
 
-//                        Intent intent = new Intent(TasksStructure.this, TasksActivity.class);
-//                        startActivity(intent);
-
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        current.interrupt();
+                        e.getMessage();
                     }
                 }
             });

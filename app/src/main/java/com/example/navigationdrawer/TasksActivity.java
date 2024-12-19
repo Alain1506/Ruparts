@@ -84,6 +84,11 @@ public class TasksActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ExpandableListView listView = findViewById(R.id.tasks_exp_list_view);
+        listView.setGroupIndicator(null);
+        listView.setChildIndicator(null);
+        listView.setChildDivider(getResources().getDrawable(R.color.based_background));
+        listView.setDivider(getResources().getDrawable(R.color.based_background));
+        listView.setDividerHeight(20);
 
         ImageView priorityItem = vv.findViewById(R.id.item_priority);
         TextView taskItem = vv.findViewById(R.id.item_name);

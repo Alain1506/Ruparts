@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="2dp"
     android:orientation="vertical"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/based_background"
     android:background="@color/white"
     tools:context=".TasksActivity">
 
@@ -102,7 +102,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Доступные" />
+            android:text="Ожидающие" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -132,6 +132,8 @@
         android:layout_height="match_parent"
         android:choiceMode="singleChoice"
         android:groupIndicator="@null"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="6dp"
         ></ExpandableListView>

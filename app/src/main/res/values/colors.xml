@@ -8,5 +8,6 @@
     <color name="deep_purple">#4f378b</color>
     <color name="light_purple">#eaddff</color>
     <color name="red">#FF0000</color>
+    <color name="based_background">#e6e0e9</color>
 
 </resources>
