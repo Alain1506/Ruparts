@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemTextAppearance(R.style.NavigationDrawerStyle);
 
         logout = vv.findViewById(R.id.logout_button);
 

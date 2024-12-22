@@ -1,25 +1,35 @@
 package com.example.navigationdrawer;
 
+import static com.google.android.material.internal.ContextUtils.getActivity;
+
+import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.navigationdrawer.helperclasses.LibraryMaps;
 import com.example.navigationdrawer.helperclasses.TaskBodyObject;
@@ -44,13 +54,24 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class TasksActivity extends AppCompatActivity {
+public class TasksActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
+    private SearchManager searchManager;
+    private SearchView searchview;
     private List<TaskBodyObject> listOfTasks = new ArrayList<>();
     public static Map<Integer, TaskBodyObject> mapOfTasks = new HashMap<>();
+    private ExpandableListView listView;
+    public static ArrayList<ExpListGroup> groups;
 
     public static String token;
     public static LibraryMaps libraryMaps = new LibraryMaps();
+
+    private ExpandableListAdapter adapter;
+
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager2;
+    private TasksViewPager2Adapter tasksViewPager2Adapter;
+
 
 
     @Override
@@ -78,30 +99,62 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+            groups = initData();
+            adapter = new ExpandableListAdapter(this, groups);
+            listView = new ExpandableListView(this);
+            listView.setAdapter(adapter);
 
-        ExpandableListView listView = findViewById(R.id.tasks_exp_list_view);
-        listView.setGroupIndicator(null);
-        listView.setChildIndicator(null);
-        listView.setChildDivider(getResources().getDrawable(R.color.based_background));
-        listView.setDivider(getResources().getDrawable(R.color.based_background));
-        listView.setDividerHeight(20);
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
 
-        ImageView priorityItem = vv.findViewById(R.id.item_priority);
-        TextView taskItem = vv.findViewById(R.id.item_name);
-        TextView commentsItem = vv.findViewById(R.id.item_comment);
-        TextView dateItem = vv.findViewById(R.id.item_date);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        TabLayout tabLayout = findViewById(R.id.tasks_tablayout);
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            listView = findViewById(R.id.tasks_exp_list_view);
+            listView.setGroupIndicator(null);
+            listView.setChildIndicator(null);
+            listView.setChildDivider(getDrawable(R.color.based_background));
+            listView.setDivider(getDrawable(R.color.based_background));
+            listView.setDividerHeight(20);
 
-        ArrayList<ExpListGroup> groups = initData();
+        viewPager2 = findViewById(R.id.tasks_view_pager2);
+        tasksViewPager2Adapter = new TasksViewPager2Adapter(this);
+        viewPager2.setAdapter(tasksViewPager2Adapter);
 
-        ExpandableListAdapter adapter = new ExpandableListAdapter(this, groups);
-        listView.setAdapter(adapter);
+            tabLayout = findViewById(R.id.tasks_tablayout);
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+
+
+            searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+
+
+
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                tabLayout.getTabAt(position).select();
+            }
+        });
+
+
 
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -118,6 +171,7 @@ public class TasksActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private ArrayList<ExpListGroup> initData() {
 
@@ -174,7 +228,7 @@ public class TasksActivity extends AppCompatActivity {
                     listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,
                             TaskBodyObject.class));
 
-                    for (TaskBodyObject tbo: listOfTasks) {
+                    for (TaskBodyObject tbo : listOfTasks) {
                         mapOfTasks.put(tbo.tbdo_id, tbo);
                     }
 
@@ -222,6 +276,7 @@ public class TasksActivity extends AppCompatActivity {
         return allGroups;
     }
 
+
     public void createLibraryMaps() {
         SharedPreferences pref = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
         libraryMaps.task_types = (HashMap<String, String>) pref.getAll();
@@ -237,18 +292,40 @@ public class TasksActivity extends AppCompatActivity {
         libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.tasks_activity_toolbar_search_menu, menu);
+        getMenuInflater().inflate(R.menu.tasks_activity_toolbar_search_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.search_bar);
+        searchview = (SearchView) menuItem.getActionView();
+        assert searchview != null;
+        searchview.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchview.setQueryHint("Поиск");
+        searchview.setIconifiedByDefault(true);
+        searchview.setOnQueryTextListener(this);
+        searchview.setOnCloseListener(this);
+        searchview.requestFocus();
+
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        if (item.getItemId() == R.id.search_bar) {
-//            Toast.makeText(TasksActivity.this, "мпиарьо", Toast.LENGTH_LONG).show();
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+
+    @Override
+    public boolean onClose() {
+        adapter.filterData("");
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        adapter.filterData(s);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        adapter.filterData(s);
+        return false;
+    }
+
 }

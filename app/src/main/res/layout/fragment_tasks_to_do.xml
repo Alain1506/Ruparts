@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_to_do"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TasksToDo">
+
+    <ExpandableListView
+        android:id="@+id/tasks_exp_list_view_To_Do"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:groupIndicator="@null"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="6dp"
+        ></ExpandableListView>
+
+</FrameLayout>

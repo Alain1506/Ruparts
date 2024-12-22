@@ -22,32 +22,36 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context c;
     private ArrayList<ExpListGroup> groups;
+    private ArrayList<ExpListGroup> filtered;
     private LayoutInflater inflater;
 
     public ExpandableListAdapter(Context c, ArrayList<ExpListGroup> groups) {
         this.c = c;
-        this.groups = groups;
+        this.filtered = new ArrayList<>();
+        this.filtered.addAll(groups);
+        this.groups = new ArrayList<>();
+        this.groups.addAll(groups);
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getGroupCount() {
-        return groups.size();
+        return filtered.size();
     }
 
     @Override
     public int getChildrenCount(int parentPosition) {
-        return groups.get(parentPosition).items.size();
+        return filtered.get(parentPosition).items.size();
     }
 
     @Override
     public Object getGroup(int parentPosition) {
-        return groups.get(parentPosition);
+        return filtered.get(parentPosition);
     }
 
     @Override
     public Object getChild(int parentPosition, int childPosition) {
-        return groups.get(parentPosition).items.get(childPosition);
+        return filtered.get(parentPosition).items.get(childPosition);
     }
 
     @Override
@@ -117,6 +121,37 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int parentPosition, int childPosition) {
         return true;
+    }
+
+    public void filterData (String query) {
+
+        query = query.toLowerCase();
+        filtered.clear();
+
+        if (query.isEmpty()) {
+            filtered.addAll(groups);
+        } else {
+            for (ExpListGroup elg: groups) {
+                ArrayList<TaskBodyObject> childList = elg.items;
+                ArrayList<TaskBodyObject> newList = new ArrayList<>();
+
+                for (TaskBodyObject tbo: childList) {
+                    if (tbo.title.toLowerCase().contains(query)) {
+                        newList.add(tbo);
+                    }
+                }
+
+                if (!newList.isEmpty()) {
+                    String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
+                    ExpListGroup newExpListGroup = new ExpListGroup(name);
+                    newExpListGroup.items = newList;
+                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.items.size() + ")";
+                    filtered.add(newExpListGroup);
+                }
+            }
+        }
+        notifyDataSetChanged();
+
     }
 
 

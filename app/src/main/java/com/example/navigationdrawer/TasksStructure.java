@@ -50,22 +50,22 @@ import okhttp3.Response;
 
 public class TasksStructure extends AppCompatActivity {
 
-    Toolbar toolbar;
-    TaskBodyObject tbo;
+    private Toolbar toolbar;
+    private TaskBodyObject tbo;
 
-    ImageView priority;
-    EditText comments;
-    EditText data;
-    TextView taskType;
-    TextView taskStatus;
-    TextView taskCreatedDate;
-    TextView taskImplementer;
-    Calendar changeableDate = Calendar.getInstance();
-    Button btnSave;
-    MaterialButton btnInWork;
-    MaterialButton btnCancelled;
-    LinearLayout threeButtonsLayout;
-    TextView changeablePrioriry;
+    private ImageView priority;
+    private EditText comments;
+    private EditText data;
+    private TextView taskType;
+    private TextView taskStatus;
+    private TextView taskCreatedDate;
+    private TextView taskImplementer;
+    private Calendar changeableDate = Calendar.getInstance();
+    private Button btnSave;
+    private MaterialButton btnInWork;
+    private MaterialButton btnCancelled;
+    private LinearLayout threeButtonsLayout;
+    private TextView changeablePrioriry;
 
 
     @SuppressLint("UseCompatLoadingForDrawables")

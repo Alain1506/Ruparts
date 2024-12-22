@@ -78,7 +78,7 @@
             android:layout_height="56dp"
             android:layout_below="@+id/ll_date"
             android:layout_marginTop="0dp"
-            android:background="@drawable/border_for_task_layout_in_exp_list"
+            android:background="@drawable/border_two_rounded_corners"
             android:backgroundTint="@color/light_gray"
             android:paddingHorizontal="10dp"
             android:text="Клиент: ООО Улитка"
