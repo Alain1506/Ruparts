@@ -247,8 +247,9 @@
                 android:background="@drawable/border_layout_search"
                 android:ems="10"
                 android:gravity="top"
-                android:inputType="text"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:inputType="textMultiLine"
+                android:ellipsize="end"/>
         </LinearLayout>
     </LinearLayout>
 

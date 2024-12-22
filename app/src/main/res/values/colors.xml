@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
     <color name="blue">#33e9ff</color>
     <color name="gray">#646b64</color>
     <color name="light_gray">#f5eff7</color>
@@ -9,5 +9,6 @@
     <color name="light_purple">#eaddff</color>
     <color name="red">#FF0000</color>
     <color name="based_background">#e6e0e9</color>
+    <color name="yellow">#ffff55</color>
 
 </resources>

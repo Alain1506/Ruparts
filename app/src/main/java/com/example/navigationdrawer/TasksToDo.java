@@ -86,7 +86,7 @@ public class TasksToDo extends Fragment {
         list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDividerHeight(20);
-        createListData("open");
+        createListData("to_do");
         adapter = new ExpandableListAdapter(context, filtered);
         list_view.setAdapter(adapter);
 

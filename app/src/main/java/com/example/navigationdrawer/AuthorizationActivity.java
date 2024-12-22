@@ -43,6 +43,7 @@ public class AuthorizationActivity extends AppCompatActivity {
     private String createPassword;
     private String token;
     private AuthorizationMap map;
+    public static LibraryMaps libraryMaps;
 
 
     @SuppressLint("MissingInflatedId")
@@ -170,7 +171,7 @@ public class AuthorizationActivity extends AppCompatActivity {
     private void saveLibrary() {
 
         final JSONObject[] jsonObject = {null};
-        LibraryMaps libraryMaps = new LibraryMaps();
+        libraryMaps = new LibraryMaps();
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -245,7 +246,7 @@ public class AuthorizationActivity extends AppCompatActivity {
                     }
                     libraryImplementerEditor.commit();
 
-                    SharedPreferences libraryStatus = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
+                    SharedPreferences libraryStatus = getSharedPreferences("SharedlibraryStatus1", MODE_PRIVATE);
                     SharedPreferences.Editor libraryStatusEditor = libraryStatus.edit();
                     for (String s : libraryMaps.status.keySet()) {
                         libraryStatusEditor.putString(s, libraryMaps.status.get(s));

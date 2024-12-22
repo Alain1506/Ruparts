@@ -25,6 +25,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.navigationdrawer.helperclasses.LibraryMaps;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String token;
     private Button logout;
     SharedPreferences sharedPreferences;
+    public static LibraryMaps libraryMaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 editor.clear();
                 editor.apply();
                 token = "";
+                libraryMaps = null;
                 startActivity(new Intent(MainActivity.this, AuthorizationActivity.class));
             }
         });

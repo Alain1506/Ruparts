@@ -81,7 +81,7 @@ public class TasksCancelled extends Fragment {
         list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDividerHeight(20);
-        createListData("canceled");
+        createListData("cancelled");
         adapter = new ExpandableListAdapter(context, filtered);
         list_view.setAdapter(adapter);
         list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {

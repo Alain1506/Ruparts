@@ -1,22 +1,20 @@
 package com.example.navigationdrawer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.navigationdrawer.helperclasses.TaskBodyObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -85,12 +83,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return view;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public View getChildView(int parentPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
         if (view == null) {
             view = inflater.inflate(R.layout.list_item, null);
         }
-
 
         TaskBodyObject tbo = (TaskBodyObject) getChild(parentPosition, childPosition);
 
@@ -98,21 +96,64 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView tboName = view.findViewById(R.id.item_name);
         TextView tboComment = view.findViewById(R.id.item_comment);
         TextView tboDate = view.findViewById(R.id.item_date);
+        TextView notification = view.findViewById(R.id.item_note);
 
         tboName.setText(tbo.title);
-        tboDate.setText(tbo.finish_at);
+
+        if (tbo.finish_at != null) {
+            Date finishDate = tbo.finish_at;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
+            String formattedDate = simpleDateFormat.format(finishDate);
+            tboDate.setText(formattedDate);
+        } else {
+            tboDate.setText("");
+        }
+
         tboComment.setText(tbo.description);
 
         switch (tbo.priority) {
             case  ("high"):
-                tboPriority.setImageResource(R.drawable.baseline_circle_24);
+                tboPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
                 break;
             case ("low"):
-                tboPriority.setImageResource(R.drawable.baseline_circle_24_yellow);
+                tboPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24);
                 break;
             default:
-                tboPriority.setImageResource(R.drawable.ic_house_foreground);
+                tboPriority.setImageResource(R.drawable.equal_priority);
                 break;
+        }
+
+//        changeableDate.set(Calendar.YEAR, year);
+//        changeableDate.set(Calendar.MONTH, monthOfYear);
+//        changeableDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        Calendar calendar = Calendar.getInstance();
+        Date fatal = calendar.getTime();
+
+//        Calendar calendar1 = Calendar.getInstance();
+//        calendar1.add(Calendar.DATE, 1);
+//        Date tomorrow = calendar1.getTime();
+
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.add(Calendar.DATE, 2);
+        Date twoDaysElse = calendar2.getTime();
+
+        Calendar calendar3 = Calendar.getInstance();
+        calendar3.add(Calendar.DATE, 3);
+        Date normalDate = calendar3.getTime();
+
+
+        if (tbo.finish_at != null && tbo.finish_at.before(fatal)) {
+            notification.setText("просрочено");
+            notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_red));
+        } else if (tbo.finish_at != null && tbo.finish_at.after(fatal) && tbo.finish_at.before(twoDaysElse)) {
+            notification.setText("остался 1 день");
+            notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
+        } else if (tbo.finish_at != null && tbo.finish_at.after(twoDaysElse) && tbo.finish_at.before(normalDate)) {
+            notification.setText("осталось 2 дня");
+            notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
+        } else {
+            notification.setText("");
         }
 
         return view;

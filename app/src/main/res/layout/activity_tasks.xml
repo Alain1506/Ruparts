@@ -79,8 +79,8 @@
         android:groupIndicator="@null"
         android:divider="@android:color/transparent"
         android:dividerHeight="8dp"
-        android:layout_marginHorizontal="12dp"
         android:layout_marginTop="6dp"
+        android:scrollbars="none"
         ></ExpandableListView>
 
 </LinearLayout>

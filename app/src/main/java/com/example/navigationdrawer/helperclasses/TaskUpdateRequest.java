@@ -2,6 +2,9 @@ package com.example.navigationdrawer.helperclasses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class TaskUpdateRequest {
 
@@ -37,7 +40,11 @@ public class TaskUpdateRequest {
             title = tbo.title;
             description = tbo.description;
             priority = tbo.priority;
-            finish_at = tbo.finish_at;
+
+            Date finishDate = tbo.finish_at;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            finish_at = simpleDateFormat.format(finishDate);
+
             implementer = tbo.implementer;
         }
     }

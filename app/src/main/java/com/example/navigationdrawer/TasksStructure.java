@@ -55,7 +55,7 @@ public class TasksStructure extends AppCompatActivity {
 
     private ImageView priority;
     private EditText comments;
-    private EditText data;
+    private EditText date;
     private TextView taskType;
     private TextView taskStatus;
     private TextView taskCreatedDate;
@@ -85,8 +85,9 @@ public class TasksStructure extends AppCompatActivity {
             setSupportActionBar(toolbar);
             Objects.requireNonNull(getSupportActionBar()).setTitle("Задача");
 
+
             comments = findViewById(R.id.details_view);
-            data = findViewById(R.id.deadline_date_view);
+            date = findViewById(R.id.deadline_date_view);
             priority = findViewById(R.id.priority_imageview);
             taskType = findViewById(R.id.type_view);
             taskStatus = findViewById(R.id.status_view);
@@ -109,29 +110,41 @@ public class TasksStructure extends AppCompatActivity {
 
                 assert tbo != null;
                 comments.setText(tbo.description);
-                data.setText(tbo.finish_at);
+
+                if (tbo.finish_at != null) {
+                    Date finishDate = tbo.finish_at;
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
+                    String formattedDate = simpleDateFormat.format(finishDate);
+                    date.setText(formattedDate);
+                }
 
                 switch (tbo.priority) {
                     case ("high"):
-                        priority.setImageResource(R.drawable.baseline_circle_24);
+                        priority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
                         changeablePrioriry.setText("Высокий");
                         break;
                     case ("low"):
-                        priority.setImageResource(R.drawable.baseline_circle_24_yellow);
+                        priority.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24);
                         changeablePrioriry.setText("Низкий");
                         break;
                     default:
-                        priority.setImageResource(R.drawable.ic_house_foreground);
+                        priority.setImageResource(R.drawable.equal_priority);
                         break;
                 }
-                taskType.setText(TasksActivity.libraryMaps.task_types.get(tbo.type));
-                taskStatus.setText(TasksActivity.libraryMaps.status.get(tbo.status));
-                taskCreatedDate.setText(tbo.created_at);
-                taskImplementer.setText(TasksActivity.libraryMaps.implementer.get(tbo.implementer));
+                taskType.setText(libraryMaps.task_types.get(tbo.type));
+                taskStatus.setText(libraryMaps.status.get(tbo.status));
 
-                getSupportActionBar().setSubtitle(tbo.title);
+                Date createdDate = tbo.created_at;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy");
+                String formattedCreatedDate = dateFormat.format(createdDate);
+                taskCreatedDate.setText(formattedCreatedDate);
+//                taskCreatedDate.setText(tbo.created_at);
 
-                if (tbo.status.equals("open")) {
+                taskImplementer.setText(libraryMaps.implementer.get(tbo.implementer));
+
+
+
+                if (tbo.status.equals("to_do")) {
                     btnInWork.setText("В работу");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_play_arrow_24));
                 } else if (tbo.status.equals("in_progress")) {
@@ -148,6 +161,10 @@ public class TasksStructure extends AppCompatActivity {
                 }
             }
 
+            getSupportActionBar().setSubtitle(tbo.title);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+
             changeablePrioriry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -163,7 +180,7 @@ public class TasksStructure extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             changeablePrioriry.setText("Высокий");
-                            priority.setImageResource(R.drawable.baseline_circle_24);
+                            priority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
                             tbo.priority = "high";
                             saveChanges(tbo);
                             bottomSheetDialog.dismiss();
@@ -173,7 +190,7 @@ public class TasksStructure extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             changeablePrioriry.setText("Низкий");
-                            priority.setImageResource(R.drawable.baseline_circle_24_yellow);
+                            priority.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24);
                             tbo.priority = "low";
                             saveChanges(tbo);
                             bottomSheetDialog.dismiss();
@@ -182,8 +199,7 @@ public class TasksStructure extends AppCompatActivity {
                 }
             });
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
             btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -195,7 +211,7 @@ public class TasksStructure extends AppCompatActivity {
             btnInWork.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (tbo.status.equals("open")) {
+                    if (tbo.status.equals("to_do")) {
                         tbo.status = "in_progress";
                         changeTaskStatus(tbo);
                         refreshData(tbo);
@@ -204,7 +220,7 @@ public class TasksStructure extends AppCompatActivity {
                         saveChanges(tbo);
 
                     } else if (tbo.status.equals("in_progress")) {
-                        tbo.status = "closed";
+                        tbo.status = "completed";
                         changeTaskStatus(tbo);
                         refreshData(tbo);
                         btnCancelled.setVisibility(View.INVISIBLE);
@@ -222,7 +238,7 @@ public class TasksStructure extends AppCompatActivity {
             btnCancelled.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    tbo.status = "canceled";
+                    tbo.status = "cancelled";
                     changeTaskStatus(tbo);
                     refreshData(tbo);
                     String textForButton = Objects.requireNonNull(libraryMaps.status.get(tbo.status)).substring(0,1).toUpperCase()
@@ -372,10 +388,11 @@ public class TasksStructure extends AppCompatActivity {
             Date yesterday = calendar.getTime();
 
             if (changeableDate.getTime().after(yesterday)) {
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                String formatted = format.format(changeableDate.getTime());
-                data.setText(formatted);
-                tbo.finish_at = formatted;
+                Date finishDate = tbo.finish_at;
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
+                String formattedDate = simpleDateFormat.format(finishDate);
+                date.setText(formattedDate);
+                tbo.finish_at = finishDate;
             } else {
                 Toast.makeText(TasksStructure.this, "Эта дата уже прошла", Toast.LENGTH_LONG).show();
             }

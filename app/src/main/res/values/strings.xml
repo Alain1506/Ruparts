@@ -10,6 +10,7 @@
 
     <string-array name="priorities">
         <item>Высокий</item>
+        <item>Средний</item>
         <item>Низкий</item>
     </string-array>
 

@@ -64,7 +64,6 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
     public static ArrayList<ExpListGroup> groups;
 
     public static String token;
-    public static LibraryMaps libraryMaps = new LibraryMaps();
 
     private ExpandableListAdapter adapter;
 
@@ -72,6 +71,7 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
     private ViewPager2 viewPager2;
     private TasksViewPager2Adapter tasksViewPager2Adapter;
 
+    public static LibraryMaps libraryMaps = new LibraryMaps();
 
 
     @Override
@@ -100,35 +100,32 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         setSupportActionBar(toolbar);
 
 
-            groups = initData();
-            adapter = new ExpandableListAdapter(this, groups);
-            listView = new ExpandableListView(this);
-            listView.setAdapter(adapter);
+        groups = initData();
+        adapter = new ExpandableListAdapter(this, groups);
+        listView = new ExpandableListView(this);
+        listView.setAdapter(adapter);
 
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-            listView = findViewById(R.id.tasks_exp_list_view);
-            listView.setGroupIndicator(null);
-            listView.setChildIndicator(null);
-            listView.setChildDivider(getDrawable(R.color.based_background));
-            listView.setDivider(getDrawable(R.color.based_background));
-            listView.setDividerHeight(20);
+        listView = findViewById(R.id.tasks_exp_list_view);
+        listView.setGroupIndicator(null);
+        listView.setChildIndicator(null);
+        listView.setChildDivider(getDrawable(R.color.based_background));
+        listView.setDivider(getDrawable(R.color.based_background));
+        listView.setDividerHeight(20);
 
         viewPager2 = findViewById(R.id.tasks_view_pager2);
         tasksViewPager2Adapter = new TasksViewPager2Adapter(this);
         viewPager2.setAdapter(tasksViewPager2Adapter);
 
-            tabLayout = findViewById(R.id.tasks_tablayout);
-            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout = findViewById(R.id.tasks_tablayout);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
 
-            searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-
-
+        searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -153,7 +150,6 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
                 tabLayout.getTabAt(position).select();
             }
         });
-
 
 
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -286,7 +282,7 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         libraryMaps.user_roles_editable = (HashMap<String, String>) pref2.getAll();
         SharedPreferences pref3 = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
         libraryMaps.implementer = (HashMap<String, String>) pref3.getAll();
-        SharedPreferences pref4 = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
+        SharedPreferences pref4 = getSharedPreferences("SharedlibraryStatus1", MODE_PRIVATE);
         libraryMaps.status = (HashMap<String, String>) pref4.getAll();
         SharedPreferences pref5 = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
         libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
