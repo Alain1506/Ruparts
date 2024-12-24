@@ -37,7 +37,7 @@
             android:text="Тип"
             android:textColor="@color/gray"
             android:layout_gravity="center_vertical"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/type_view"
@@ -140,6 +140,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
+                    android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
                     android:backgroundTint="@color/white"
                     android:entries="@array/priorities" />
 
@@ -184,13 +185,15 @@
             android:gravity="bottom"
             android:text="Исполнитель" />
 
-        <EditText
+        <TextView
             android:id="@+id/implementer_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:ems="10"
             android:inputType="text"
-            android:background="@drawable/border_layout_search"/>
+            android:background="@drawable/border_layout_search"
+            android:drawableEnd="@drawable/baseline_arrow_drop_down_24"/>
         </LinearLayout>
 
         <LinearLayout
@@ -214,7 +217,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textSize="16sp"
                 android:background="@drawable/border_layout_search"
+                android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
                 android:onClick="setDate"
                 android:cursorVisible="false"
                 android:ems="10"

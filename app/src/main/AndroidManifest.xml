@@ -19,6 +19,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,11 +30,13 @@
 
         <activity
             android:name=".TasksStructure"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:parentActivityName=".TasksActivity"/>
 
         <activity
             android:name=".TasksActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:parentActivityName=".MainActivity">
 
@@ -46,6 +49,7 @@
 
         <activity
             android:name=".AuthorizationActivity"
+            android:screenOrientation="portrait"
             android:exported="false"/>
 
 

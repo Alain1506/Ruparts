@@ -128,6 +128,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 //        changeableDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
         Date fatal = calendar.getTime();
 
 //        Calendar calendar1 = Calendar.getInstance();
@@ -135,16 +136,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 //        Date tomorrow = calendar1.getTime();
 
         Calendar calendar2 = Calendar.getInstance();
-        calendar2.add(Calendar.DATE, 2);
+        calendar2.add(Calendar.DATE, 1);
         Date twoDaysElse = calendar2.getTime();
 
         Calendar calendar3 = Calendar.getInstance();
-        calendar3.add(Calendar.DATE, 3);
+        calendar3.add(Calendar.DATE, 2);
         Date normalDate = calendar3.getTime();
 
-
-        if (tbo.finish_at != null && tbo.finish_at.before(fatal)) {
+        if (tbo.finish_at == null) {
+            notification.setText("");
+            notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_white));
+        } else if (tbo.finish_at != null && tbo.finish_at.before(fatal)) {
             notification.setText("просрочено");
+            notification.setTextColor(c.getColor(R.color.white));
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_red));
         } else if (tbo.finish_at != null && tbo.finish_at.after(fatal) && tbo.finish_at.before(twoDaysElse)) {
             notification.setText("остался 1 день");
@@ -154,6 +158,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
         } else {
             notification.setText("");
+            notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_white));
         }
 
         return view;
