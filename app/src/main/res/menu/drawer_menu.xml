@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/tasks_id"
+            android:id="@+id/tasks"
             android:icon="@drawable/baseline_home_24"
             android:title="Задачи" />
 

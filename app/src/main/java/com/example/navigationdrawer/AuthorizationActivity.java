@@ -7,11 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,7 +23,6 @@ import com.example.navigationdrawer.helperclasses.LibraryMaps;
 import com.example.navigationdrawer.helperclasses.LibraryRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -39,12 +36,10 @@ import okhttp3.Response;
 
 public class AuthorizationActivity extends AppCompatActivity {
 
-    private EditText password;
-    private String createPassword;
-    private String token;
-    private AuthorizationMap map;
-    public static LibraryMaps libraryMaps;
+    private LibraryMaps libraryMaps = new LibraryMaps();
+    private String token = null;
 
+    private String enteredSymbols;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -70,22 +65,22 @@ public class AuthorizationActivity extends AppCompatActivity {
         Button button0 = findViewById(R.id.btn_0);
         Button cancelButton = findViewById(R.id.btn_cancel);
         Button backButton = findViewById(R.id.btn_backspace);
-        password = findViewById(R.id.password_layout);
+        EditText password = findViewById(R.id.password_layout);
 
-        createPassword = "";
-        password.setText(createPassword);
+        enteredSymbols = "";
+        password.setText(enteredSymbols);
 
-        map = new AuthorizationMap();
+        AuthorizationMap map = new AuthorizationMap();
 
         Button[] buttons0to9 = {button0,button1,button2,button3,button4,button5,button6,button7,button8,button9};
 
         for (int i = 0; i < buttons0to9.length; i++) {
-            int number = i;
+            final int number = i;
             buttons0to9[number].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    createPassword += String.valueOf(number);
-                    password.setText(createPassword);
+                    enteredSymbols += String.valueOf(number);
+                    password.setText(enteredSymbols);
                 }
             });
         }
@@ -93,16 +88,16 @@ public class AuthorizationActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createPassword = "";
-                password.setText(createPassword);
+                enteredSymbols = "";
+                password.setText(enteredSymbols);
             }
         });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createPassword = createPassword.substring(0, createPassword.length() - 1);
-                password.setText(createPassword);
+                enteredSymbols = enteredSymbols.substring(0, enteredSymbols.length() - 1);
+                password.setText(enteredSymbols);
             }
         });
 
@@ -114,9 +109,9 @@ public class AuthorizationActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 for (Map.Entry<String, String> entry : map.authCodes.entrySet()) {
-                    if (createPassword.equals(entry.getValue())) {
-                        createPassword = "";
-                        password.setText(createPassword);
+                    if (enteredSymbols.equals(entry.getValue())) {
+//                        enteredSymbols = "";
+//                        password.setText(enteredSymbols);
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -133,8 +128,8 @@ public class AuthorizationActivity extends AppCompatActivity {
                                     Response response = client.newCall(request).execute();
                                     if (response.code() != 200) {
                                         Toast.makeText(AuthorizationActivity.this, "Сервер не может обработать запрос", Toast.LENGTH_LONG).show();
-                                        createPassword = "";
-                                        password.setText(createPassword);
+                                        enteredSymbols = "";
+                                        password.setText(enteredSymbols);
                                         Intent intent = new Intent(AuthorizationActivity.this, AuthorizationActivity.class);
                                         startActivity(intent);
                                     }
@@ -153,10 +148,10 @@ public class AuthorizationActivity extends AppCompatActivity {
                             }
                         });
                         thread.start();
-                    } else if (createPassword.length() == 6 && !createPassword.equals(entry.getValue())) {
+                    } else if (enteredSymbols.length() == 6 && !enteredSymbols.equals(entry.getValue())) {
                         Toast.makeText(AuthorizationActivity.this, "Неверный пароль", Toast.LENGTH_LONG).show();
-                        createPassword = "";
-                        password.setText(createPassword);
+                        enteredSymbols = "";
+                        password.setText(enteredSymbols);
                     }
                 }
             }
@@ -205,37 +200,44 @@ public class AuthorizationActivity extends AppCompatActivity {
 
                     jsonObject[0] = new JSONObject(responseString);
 
+//                    libraryMaps.task_types = null;
+//                    libraryMaps.user_roles = null;
+//                    libraryMaps.user_roles_editable = null;
+//                    libraryMaps.implementer = null;
+//                    libraryMaps.status = null;
+//                    libraryMaps.id_reference_type = null;
+
                     String task_types = jsonObject[0].getJSONObject("data").getJSONObject("task_types").toString();
-                    libraryMaps.task_types = objectMapper.readValue(task_types, HashMap.class);
+                    libraryMaps.taskTypes = objectMapper.readValue(task_types, HashMap.class);
                     String user_roles = jsonObject[0].getJSONObject("data").getJSONObject("user_roles").toString();
-                    libraryMaps.user_roles = objectMapper.readValue(user_roles, HashMap.class);
+                    libraryMaps.userRoles = objectMapper.readValue(user_roles, HashMap.class);
                     String user_roles_editable = jsonObject[0].getJSONObject("data").getJSONObject("user_roles_editable").toString();
-                    libraryMaps.user_roles_editable = objectMapper.readValue(user_roles_editable, HashMap.class);
+                    libraryMaps.userRolesEditable = objectMapper.readValue(user_roles_editable, HashMap.class);
                     String implementer = jsonObject[0].getJSONObject("data").getJSONObject("implementer").toString();
                     libraryMaps.implementer = objectMapper.readValue(implementer, HashMap.class);
                     String status = jsonObject[0].getJSONObject("data").getJSONObject("status").toString();
                     libraryMaps.status = objectMapper.readValue(status, HashMap.class);
                     String id_reference_type = jsonObject[0].getJSONObject("data").getJSONObject("id_reference_type").toString();
-                    libraryMaps.id_reference_type = objectMapper.readValue(id_reference_type, HashMap.class);
+                    libraryMaps.idReferenceType = objectMapper.readValue(id_reference_type, HashMap.class);
 
                     SharedPreferences libraryTaskTypes = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
                     SharedPreferences.Editor libraryTaskTypesEditor = libraryTaskTypes.edit();
-                    for (String s : libraryMaps.task_types.keySet()) {
-                        libraryTaskTypesEditor.putString(s, libraryMaps.task_types.get(s));
+                    for (String s : libraryMaps.taskTypes.keySet()) {
+                        libraryTaskTypesEditor.putString(s, libraryMaps.taskTypes.get(s));
                     }
                     libraryTaskTypesEditor.commit();
 
                     SharedPreferences libraryUserRoles = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
                     SharedPreferences.Editor libraryUserRolesEditor = libraryUserRoles.edit();
-                    for (String s : libraryMaps.user_roles.keySet()) {
-                        libraryUserRolesEditor.putString(s, libraryMaps.user_roles.get(s));
+                    for (String s : libraryMaps.userRoles.keySet()) {
+                        libraryUserRolesEditor.putString(s, libraryMaps.userRoles.get(s));
                     }
                     libraryUserRolesEditor.commit();
 
                     SharedPreferences libraryUserRolesEditable = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
                     SharedPreferences.Editor libraryUserRolesEditableEditor = libraryUserRolesEditable.edit();
-                    for (String s : libraryMaps.user_roles_editable.keySet()) {
-                        libraryUserRolesEditableEditor.putString(s, libraryMaps.user_roles_editable.get(s));
+                    for (String s : libraryMaps.userRolesEditable.keySet()) {
+                        libraryUserRolesEditableEditor.putString(s, libraryMaps.userRolesEditable.get(s));
                     }
                     libraryUserRolesEditableEditor.commit();
 
@@ -246,7 +248,7 @@ public class AuthorizationActivity extends AppCompatActivity {
                     }
                     libraryImplementerEditor.commit();
 
-                    SharedPreferences libraryStatus = getSharedPreferences("SharedlibraryStatus1", MODE_PRIVATE);
+                    SharedPreferences libraryStatus = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
                     SharedPreferences.Editor libraryStatusEditor = libraryStatus.edit();
                     for (String s : libraryMaps.status.keySet()) {
                         libraryStatusEditor.putString(s, libraryMaps.status.get(s));
@@ -255,8 +257,8 @@ public class AuthorizationActivity extends AppCompatActivity {
 
                     SharedPreferences libraryIdReferenceType = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
                     SharedPreferences.Editor libraryIdReferenceTypeEditor = libraryIdReferenceType.edit();
-                    for (String s : libraryMaps.id_reference_type.keySet()) {
-                        libraryIdReferenceTypeEditor.putString(s, libraryMaps.id_reference_type.get(s));
+                    for (String s : libraryMaps.idReferenceType.keySet()) {
+                        libraryIdReferenceTypeEditor.putString(s, libraryMaps.idReferenceType.get(s));
                     }
                     libraryIdReferenceTypeEditor.commit();
 

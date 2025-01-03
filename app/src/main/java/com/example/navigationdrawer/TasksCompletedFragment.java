@@ -1,7 +1,5 @@
 package com.example.navigationdrawer;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -21,13 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.example.navigationdrawer.helperclasses.TaskBodyObject;
+import com.example.navigationdrawer.helperclasses.TaskObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-public class TasksToDo extends Fragment {
+public class TasksCompletedFragment extends Fragment {
 
     private Context context;
     private ExpandableListView list_view;
@@ -40,7 +35,7 @@ public class TasksToDo extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.context = this.getActivity();
-        return inflater.inflate(R.layout.fragment_tasks_to_do, container, false);
+        return inflater.inflate(R.layout.fragment_tasks_completed, container, false);
     }
 
     @Override
@@ -77,33 +72,58 @@ public class TasksToDo extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        list_view = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_To_Do);
+    public void loadListView() {
         list_view.setGroupIndicator(null);
         list_view.setChildIndicator(null);
         list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDividerHeight(20);
-        createListData("to_do");
+        createListData("completed");
         adapter = new ExpandableListAdapter(context, filtered);
         list_view.setAdapter(adapter);
-
         list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-        public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
-            ExpListGroup elg = filtered.get(parentPosition);
-            TaskBodyObject tbo = elg.items.get(childPosition);
+                ExpListGroup elg = filtered.get(parentPosition);
+                TaskObject tbo = elg.itemsList.get(childPosition);
 
-            Intent intent = new Intent(context, TasksStructure.class);
-            intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
-            startActivity(intent);
+                Intent intent = new Intent(context, TasksStructure.class);
+                intent.putExtra(TaskObject.class.getSimpleName(), tbo);
+                startActivity(intent);
 
-            return false;
-        }
+                return false;
+            }
         });
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        list_view = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_completed);
+        this.loadListView();
+//        list_view.setGroupIndicator(null);
+//        list_view.setChildIndicator(null);
+//        list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
+//        list_view.setDivider(getResources().getDrawable(R.color.based_background));
+//        list_view.setDividerHeight(20);
+//        createListData("completed");
+//        adapter = new ExpandableListAdapter(context, filtered);
+//        list_view.setAdapter(adapter);
+//        list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//            @Override
+//            public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
+//
+//                ExpListGroup elg = filtered.get(parentPosition);
+//                TaskBodyObject tbo = elg.items.get(childPosition);
+//
+//                Intent intent = new Intent(context, TasksStructure.class);
+//                intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
+//                startActivity(intent);
+//
+//                return false;
+//            }
+//        });
     }
     private void createListData(String status) {
 
@@ -111,14 +131,14 @@ public class TasksToDo extends Fragment {
         filtered.clear();
 
         if (status.isEmpty()) {
-            filtered.addAll(TasksActivity.groups);
+            filtered.addAll(TasksActivity.expListContents);
         } else {
-            for (ExpListGroup elg: TasksActivity.groups) {
-                ArrayList<TaskBodyObject> childList = elg.items;
-                ArrayList<TaskBodyObject> newList = new ArrayList<>();
+            for (ExpListGroup elg: TasksActivity.expListContents) {
+                ArrayList<TaskObject> childList = elg.itemsList;
+                ArrayList<TaskObject> newList = new ArrayList<>();
 
-                for (TaskBodyObject tbo: childList) {
-                    if (tbo.status.equals(status)) {
+                for (TaskObject tbo: childList) {
+                    if (tbo.taskStatus.equals(status)) {
                         newList.add(tbo);
                     }
                 }
@@ -126,13 +146,12 @@ public class TasksToDo extends Fragment {
                 if (!newList.isEmpty()) {
                     String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
                     ExpListGroup newExpListGroup = new ExpListGroup(name);
-                    newExpListGroup.items = newList;
-                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.items.size() + ")";
+                    newExpListGroup.itemsList = newList;
+                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
                     filtered.add(newExpListGroup);
                 }
             }
         }
-
     }
 
 

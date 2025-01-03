@@ -13,10 +13,10 @@ public class TaskStatusRequest {
 //    private TaskBodyObject tbo;
 
 
-    public TaskStatusRequest(TaskBodyObject tbo) {
+    public TaskStatusRequest(TaskObject tbo) {
         dataObject = new TaskStatusRequestObject();
-        dataObject.tsro_id = tbo.tbdo_id;
-        dataObject.tsro_status = tbo.status;
+        dataObject.tsro_id = tbo.taskId;
+        dataObject.tsro_status = tbo.taskStatus;
     }
     public class TaskStatusRequestObject {
 

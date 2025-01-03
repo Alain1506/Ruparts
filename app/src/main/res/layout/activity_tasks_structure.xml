@@ -209,11 +209,12 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textSize="15sp"
+            android:textColor="@color/black"
             android:gravity="bottom"
             android:text="Выполнить до" />
 
             <EditText
-                android:id="@+id/deadline_date_view"
+                android:id="@+id/finishAt_date_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -246,15 +247,16 @@
             android:text="Детали" />
 
             <EditText
-                android:id="@+id/details_view"
+                android:id="@+id/description_view"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@drawable/border_layout_search"
+                android:editable="true"
+                android:ellipsize="end"
                 android:ems="10"
                 android:gravity="top"
-                android:textSize="15sp"
                 android:inputType="textMultiLine"
-                android:ellipsize="end"/>
+                android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -386,7 +388,7 @@
         android:paddingHorizontal="12dp">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_cancel"
+            android:id="@+id/button_cancelled"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:backgroundTint="@color/light_purple"
@@ -407,23 +409,24 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_save"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
             android:backgroundTint="@color/light_purple"
+            android:paddingHorizontal="27dp"
             android:text="Сохранить"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:cornerRadius="5dp"
             app:strokeWidth="1dp"
-            app:icon="@drawable/baseline_check_24"
+            android:drawableStart="@drawable/baseline_check_24"
             app:iconGravity="textStart"
             app:iconSize="30dp"
             app:iconTint="@color/black"
             android:layout_marginEnd="2dp"
-            android:paddingHorizontal="7dp"/>
+            />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_in_work"
@@ -436,12 +439,13 @@
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:cornerRadius="5dp"
+                app:strokeWidth="1dp"
                 android:drawableStart="@drawable/baseline_play_arrow_24"
                 app:iconGravity="textStart"
                 app:iconSize="30dp"
                 app:iconTint="@color/black"
                 android:layout_marginStart="2dp"
-                app:strokeWidth="1dp" />
+                />
         </LinearLayout>
 
     </LinearLayout>

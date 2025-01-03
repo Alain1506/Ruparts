@@ -4,7 +4,7 @@
     android:id="@+id/fragment_to_do"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TasksToDo">
+    tools:context=".TasksToDoFragment">
 
     <ExpandableListView
         android:id="@+id/tasks_exp_list_view_To_Do"

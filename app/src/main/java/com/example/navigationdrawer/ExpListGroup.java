@@ -1,7 +1,6 @@
 package com.example.navigationdrawer;
 
-import com.example.navigationdrawer.helperclasses.LibraryMaps;
-import com.example.navigationdrawer.helperclasses.TaskBodyObject;
+import com.example.navigationdrawer.helperclasses.TaskObject;
 
 import java.util.ArrayList;
 
@@ -9,10 +8,18 @@ public class ExpListGroup {
 
     public String elgTaskType;
     public String elgTaskTypeToShow;
-    public ArrayList<TaskBodyObject> items = new ArrayList<>();
+    public ArrayList<TaskObject> itemsList = new ArrayList<>();
 
     public ExpListGroup(String elgTaskType) {
         this.elgTaskType = elgTaskType;
     }
 
+    public void updateTask(TaskObject task) {
+        for (int i = 0; i < itemsList.size(); i++) {
+            if (itemsList.get(i).taskId == task.taskId) {
+                itemsList.set(i, task);
+            }
+        }
+    }
+    
 }

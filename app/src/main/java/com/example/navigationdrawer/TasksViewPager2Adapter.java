@@ -7,6 +7,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class TasksViewPager2Adapter extends FragmentStateAdapter {
 
+    private Fragment[] fragments = new Fragment[5];
+
     public TasksViewPager2Adapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
@@ -14,18 +16,27 @@ public class TasksViewPager2Adapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
+        Fragment fragment = doCreateFragment(position);
+        this.fragments[position] = fragment;
+        return fragment;
+    }
+
+    public Fragment getFragmentByPosition(int position) {
+        return this.fragments[position];
+    }
+
+    private Fragment doCreateFragment(int position){
         switch (position) {
-            case 0: return new TasksToDo();
-            case 1: return new TasksInProgress();
-            case 2: return new TasksCompleted();
-            case 3: return new TasksCancelled();
-            case 4: return new TasksAll();
-            default: return new TasksToDo();
+            case 1: return new TasksInProgressFragment();
+            case 2: return new TasksCompletedFragment();
+            case 3: return new TasksCancelledFragment();
+            case 4: return new TasksAllFragment();
+            default: return new TasksToDoFragment();
         }
     }
 
     @Override
     public int getItemCount() {
-        return 5;
+        return this.fragments.length;
     }
 }

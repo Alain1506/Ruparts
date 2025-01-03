@@ -1,28 +1,23 @@
 package com.example.navigationdrawer;
 
-import static com.google.android.material.internal.ContextUtils.getActivity;
+import static com.example.navigationdrawer.MainActivity.libraryMaps;
+import static com.example.navigationdrawer.MainActivity.token;
 
-import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -31,8 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.navigationdrawer.helperclasses.LibraryMaps;
-import com.example.navigationdrawer.helperclasses.TaskBodyObject;
+import com.example.navigationdrawer.helperclasses.TaskObject;
 import com.example.navigationdrawer.helperclasses.TaskObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -56,22 +50,16 @@ import okhttp3.Response;
 
 public class TasksActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
+
+    public static List<TaskObject> listOfTasks = new ArrayList<>();
+    public static Map<Integer, TaskObject> mapOfTasks = new HashMap<>();
+    public static ArrayList<ExpListGroup> expListContents;
+
     private SearchManager searchManager;
-    private SearchView searchview;
-    private List<TaskBodyObject> listOfTasks = new ArrayList<>();
-    public static Map<Integer, TaskBodyObject> mapOfTasks = new HashMap<>();
-    private ExpandableListView listView;
-    public static ArrayList<ExpListGroup> groups;
-
-    public static String token;
-
     private ExpandableListAdapter adapter;
-
     private TabLayout tabLayout;
-    private ViewPager2 viewPager2;
-    private TasksViewPager2Adapter tasksViewPager2Adapter;
-
-    public static LibraryMaps libraryMaps = new LibraryMaps();
+    private ViewPager2 fragmentPager;
+    private TasksViewPager2Adapter fragmentPagerAdapter;
 
 
     @Override
@@ -83,7 +71,7 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         //добавить видимость еще одного layout.xml
         LayoutInflater layInfl = this.getLayoutInflater();
         RelativeLayout linLay = findViewById(R.id.list_of_tasks);
-        View vv = layInfl.inflate(R.layout.list_item, linLay, true);
+        View vv = layInfl.inflate(R.layout.task_explist_item, linLay, true);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_tasks), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -91,47 +79,41 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
             return insets;
         });
 
-        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
-        token = sharedPreferences.getString("token", "");
-
-        createLibraryMaps();
-
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-
-
-        groups = initData();
-        adapter = new ExpandableListAdapter(this, groups);
-        listView = new ExpandableListView(this);
-        listView.setAdapter(adapter);
-
         Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        listView = findViewById(R.id.tasks_exp_list_view);
-        listView.setGroupIndicator(null);
-        listView.setChildIndicator(null);
-        listView.setChildDivider(getDrawable(R.color.based_background));
-        listView.setDivider(getDrawable(R.color.based_background));
-        listView.setDividerHeight(20);
+        expListContents = initializeExpListContents();
 
-        viewPager2 = findViewById(R.id.tasks_view_pager2);
-        tasksViewPager2Adapter = new TasksViewPager2Adapter(this);
-        viewPager2.setAdapter(tasksViewPager2Adapter);
+        adapter = new ExpandableListAdapter(this, expListContents);
+        ExpandableListView expandableListView = new ExpandableListView(this);
+        expandableListView.setAdapter(adapter);
+        expandableListView = findViewById(R.id.tasks_exp_list_view);
+        expandableListView.setGroupIndicator(null); //здесь можно задать разные индикаторы, если группа раскрыта или свернута
+        expandableListView.setChildIndicator(null);
+        expandableListView.setChildDivider(getDrawable(R.color.based_background));
+        expandableListView.setDivider(getDrawable(R.color.based_background));
+        expandableListView.setDividerHeight(20);
 
         tabLayout = findViewById(R.id.tasks_tablayout);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
+        fragmentPager = findViewById(R.id.tasks_view_pager2);
+        fragmentPagerAdapter = new TasksViewPager2Adapter(this);
+        fragmentPager.setAdapter(fragmentPagerAdapter);
 
         searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
+        if (tabLayout.getSelectedTabPosition() >= 0) {
+            doInitializeFragmentPage(tabLayout.getSelectedTabPosition());
+        }
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager2.setCurrentItem(tab.getPosition());
+                fragmentPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -143,7 +125,7 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
             }
         });
 
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        fragmentPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -152,24 +134,24 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         });
 
 
-        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
-                ExpListGroup elg = groups.get(parentPosition);
-                TaskBodyObject tbo = elg.items.get(childPosition);
+                ExpListGroup elg = expListContents.get(parentPosition);
+                TaskObject task = elg.itemsList.get(childPosition);
 
                 Intent intent = new Intent(getBaseContext(), TasksStructure.class);
-                intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
+                intent.putExtra(TaskObject.class.getSimpleName(), task);
                 startActivity(intent);
 
                 return false;
             }
         });
+
     }
 
-
-    private ArrayList<ExpListGroup> initData() {
+    private ArrayList<ExpListGroup> initializeExpListContents() {
 
         ObjectMapper objectMapper = new ObjectMapper();
         TaskObjectRequest taskObject = new TaskObjectRequest();
@@ -200,11 +182,10 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
                             .build();
                     Response response = client.newCall(request).execute();
                     if (response.code() == 401) {
+                        Toast.makeText(TasksActivity.this, "Токен устарел", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(TasksActivity.this, AuthorizationActivity.class);
                         startActivity(intent);
-                        Toast.makeText(TasksActivity.this, "Токен устарел", Toast.LENGTH_LONG).show();
                     } else if (response.code() != 200) {
-//                        String string = response.body().string();
                         Toast.makeText(TasksActivity.this, "Произошла ошибка загрузки задач", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
                         startActivity(intent);
@@ -222,10 +203,10 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
                     String jsonListOfTasks = jsonObject[0].getJSONObject("data").getJSONArray("list").toString();
 
                     listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,
-                            TaskBodyObject.class));
+                            TaskObject.class));
 
-                    for (TaskBodyObject tbo : listOfTasks) {
-                        mapOfTasks.put(tbo.tbdo_id, tbo);
+                    for (TaskObject task : listOfTasks) {
+                        mapOfTasks.put(task.taskId, task);
                     }
 
                 } catch (Exception e) {
@@ -242,18 +223,19 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
 
         ArrayList<ExpListGroup> allGroups = new ArrayList<>();
 
-        for (String s : libraryMaps.task_types.keySet()) {
+        for (String s : libraryMaps.taskTypes.keySet()) {
             ExpListGroup elg = new ExpListGroup(s);
-            elg.elgTaskTypeToShow = libraryMaps.task_types.get(s);
+            elg.elgTaskTypeToShow = libraryMaps.taskTypes.get(s);
             allGroups.add(elg);
         }
 
         for (int i = 0; i < listOfTasks.size(); i++) {
-            TaskBodyObject tbo = listOfTasks.get(i);
+            TaskObject task = listOfTasks.get(i);
 
             for (ExpListGroup elg : allGroups) {
-                if (tbo.type.equals(elg.elgTaskType)) {
-                    elg.items.add(tbo);
+                if (task.taskType.equals(elg.elgTaskType)) {
+                    elg.itemsList.add(task);
+                    break;
                 }
             }
         }
@@ -261,11 +243,11 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         Iterator<ExpListGroup> iterator = allGroups.iterator();
         while (iterator.hasNext()) {
             ExpListGroup element = iterator.next();
-            if (element.items.isEmpty()) {
+            if (element.itemsList.isEmpty()) {
                 iterator.remove();
             } else {
                 element.elgTaskTypeToShow = element.elgTaskTypeToShow.substring(0, 1).toUpperCase()
-                        + element.elgTaskTypeToShow.substring(1) + " (" + element.items.size() + ")";
+                        + element.elgTaskTypeToShow.substring(1) + " (" + element.itemsList.size() + ")";
             }
         }
 
@@ -273,31 +255,15 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
     }
 
 
-    public void createLibraryMaps() {
-        SharedPreferences pref = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
-        libraryMaps.task_types = (HashMap<String, String>) pref.getAll();
-        SharedPreferences pref1 = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
-        libraryMaps.user_roles = (HashMap<String, String>) pref1.getAll();
-        SharedPreferences pref2 = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
-        libraryMaps.user_roles_editable = (HashMap<String, String>) pref2.getAll();
-        SharedPreferences pref3 = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
-        libraryMaps.implementer = (HashMap<String, String>) pref3.getAll();
-        SharedPreferences pref4 = getSharedPreferences("SharedlibraryStatus1", MODE_PRIVATE);
-        libraryMaps.status = (HashMap<String, String>) pref4.getAll();
-        SharedPreferences pref5 = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
-        libraryMaps.id_reference_type = (HashMap<String, String>) pref5.getAll();
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tasks_activity_toolbar_search_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.search_bar);
-        searchview = (SearchView) menuItem.getActionView();
+        SearchView searchview = (SearchView) menuItem.getActionView();
         assert searchview != null;
         searchview.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchview.setQueryHint("Поиск");
-        searchview.setIconifiedByDefault(true);
+//        searchview.setIconifiedByDefault(true);
         searchview.setOnQueryTextListener(this);
         searchview.setOnCloseListener(this);
         searchview.requestFocus();
@@ -323,5 +289,61 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         adapter.filterData(s);
         return false;
     }
+
+    private void doInitializeFragmentPage(int selectedTabPosition) {
+        try {
+            Objects.requireNonNull(tabLayout.getTabAt(fragmentPager.getCurrentItem())).select();
+            fragmentPager.setCurrentItem(tabLayout.getSelectedTabPosition());
+
+            switch (selectedTabPosition) {
+                case (0):
+                    TasksToDoFragment fr = (TasksToDoFragment) fragmentPagerAdapter.getFragmentByPosition(tabLayout.getSelectedTabPosition());
+                    fr.loadListView();
+                    break;
+                case (1):
+                    TasksInProgressFragment fr1 = (TasksInProgressFragment) fragmentPagerAdapter.getFragmentByPosition(tabLayout.getSelectedTabPosition());
+                    fr1.loadListView();
+                    break;
+                case  (2):
+                    TasksCompletedFragment fr2 = (TasksCompletedFragment) fragmentPagerAdapter.getFragmentByPosition(tabLayout.getSelectedTabPosition());
+                    fr2.loadListView();
+                    break;
+                case (3):
+                    TasksCancelledFragment fr3 = (TasksCancelledFragment) fragmentPagerAdapter.getFragmentByPosition(tabLayout.getSelectedTabPosition());
+                    fr3.loadListView();
+                    break;
+                case  (4):
+                    TasksAllFragment fr4 = (TasksAllFragment) fragmentPagerAdapter.getFragmentByPosition(tabLayout.getSelectedTabPosition());
+                    fr4.loadListView();
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+
+        int position = tabLayout.getSelectedTabPosition();
+        doInitializeFragmentPage(position);
+
+
+
+
+
+//        tasksViewPager2Adapter.createFragment(viewPager2.getCurrentItem());
+//        String s = null;
+
+
+        //When BACK BUTTON is pressed, the activity on the stack is restarted
+        //Do what you want on the refresh procedure here
+    }
+
+
+
 
 }

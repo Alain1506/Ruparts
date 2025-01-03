@@ -1,5 +1,7 @@
 package com.example.navigationdrawer.helperclasses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.text.SimpleDateFormat;
@@ -14,16 +16,16 @@ public class TaskUpdateRequest {
     public String action;
     @JsonProperty("data")
     public TaskUpdateObject dataObject;
-    private TaskBodyObject tbo;
 
-
-    public TaskUpdateRequest(TaskBodyObject tbo) {
+    public TaskUpdateRequest(TaskObject tbo) {
         dataObject = new TaskUpdateObject(tbo);
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public class TaskUpdateObject {
 
         @JsonProperty("id")
-        public Integer tuo_id;
+        public Integer tuoId;
         @JsonProperty("title")
         public String title;
         @JsonProperty("description")
@@ -31,21 +33,24 @@ public class TaskUpdateRequest {
         @JsonProperty("priority")
         public String priority;
         @JsonProperty("finish_at")
-        public String finish_at;
+        public String finishAt;
         @JsonProperty("implementer")
         public String implementer;
 
-        public TaskUpdateObject(TaskBodyObject tbo) {
-            tuo_id = tbo.tbdo_id;
-            title = tbo.title;
-            description = tbo.description;
-            priority = tbo.priority;
+        public TaskUpdateObject(TaskObject task) {
 
-            Date finishDate = tbo.finish_at;
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            finish_at = simpleDateFormat.format(finishDate);
+            tuoId = (task.taskId == 0) ? 0 : task.taskId;
+            title = (task.taskTitle == null) ? null : task.taskTitle;
+            description = (task.taskDescription == null) ? null : task.taskDescription;
+            priority = (task.taskPriority == null) ? null : task.taskPriority;
+            implementer = (task.taskImplementer == null) ? null : task.taskImplementer;
 
-            implementer = tbo.implementer;
+            if (task.taskFinishAt == null) {
+                finishAt = "";
+            } else {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                finishAt = simpleDateFormat.format(task.taskFinishAt);
+            }
         }
     }
 

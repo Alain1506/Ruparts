@@ -3,57 +3,53 @@ package com.example.navigationdrawer.helperclasses;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public class TaskBodyObject implements Serializable {
-            public TaskBodyObject() {
+@JsonIgnoreProperties(ignoreUnknown = true)
+        public class TaskObject implements Serializable {
+            public TaskObject() {
                 taskBodyDataAuthor = new TaskBodyDataAuthor();
 //                listOfHistory = new ArrayList<>();
             }
             @JsonProperty("id")
-            public int tbdo_id;
+            public int taskId;
             @JsonProperty("author")
             public TaskBodyDataAuthor taskBodyDataAuthor;
             @JsonProperty("title")
-            public String title;
+            public String taskTitle;
             @JsonProperty("description")
-            public String description;
+            public String taskDescription;
             @JsonProperty("type")
-            public String type;
+            public String taskType;
             @JsonProperty("status")
-            public String status;
+            public String taskStatus;
             @JsonProperty("priority")
-            public String priority;
+            public String taskPriority;
             @JsonProperty("implementer")
-            public String implementer;
+            public String taskImplementer;
             @JsonProperty("created_at")
             @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT")
-            public Date created_at;
+            public Date taskCreatedAt;
             @JsonProperty("updated_at")
             @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT")
-            public Date updated_at;
+            public Date taskUpdatedAt;
             @JsonProperty("finish_at")
-            public Date finish_at;
+            public Date taskFinishAt;
             @JsonProperty("created_at_diff")
-            public String created_at_diff;
+            public String taskCreatedAtDiff;
             @JsonProperty("attributes")
             @JsonIgnore
-            public String[] attributes;                             //какой тип переменной?
+            public String[] taskAttributes;                             //какой тип переменной?
             @JsonProperty("files")
             @JsonIgnore
-            public String[] tbdo_files;                              //какой тип переменной?
+            public String[] taskFiles;                              //какой тип переменной?
             @JsonProperty("related_tasks")
             @JsonIgnore
-            public String[] related_tasks;                           //какой тип переменной?
+            public String[] taskRelatedTasks;                           //какой тип переменной?
 ////            @JsonProperty("history")
 //            public ArrayList<TaskBodyDataHistory> listOfHistory;
 
@@ -77,5 +73,13 @@ import java.util.Map;
 //                public Date created_at;
 //            }
 
+
+            public String getTaskDescription() {
+                return taskDescription;
+            }
+
+            public void setTaskDescription(String taskDescription) {
+                this.taskDescription = taskDescription;
+            }
         }
 

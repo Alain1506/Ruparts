@@ -14,16 +14,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/drag_handle_view"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="56dp"
             android:gravity="center_vertical"
             android:paddingLeft="35dp"
+            android:fontFamily="@font/roboto"
             android:text="Выберите приоритет:"
             android:textSize="16dp"
             android:textStyle="bold">
@@ -33,30 +34,36 @@
         <TextView
             android:id="@+id/ts_status_high"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="56dp"
             android:drawableStart="@drawable/baseline_keyboard_double_arrow_up_24"
             android:gravity="center_vertical"
             android:paddingLeft="30dp"
+            android:fontFamily="@font/roboto"
+            android:drawablePadding="16dp"
             android:text="Высокий"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/ts_status_medium"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="56dp"
             android:drawableStart="@drawable/equal_priority"
             android:gravity="center_vertical"
             android:paddingLeft="30dp"
+            android:fontFamily="@font/roboto"
+            android:drawablePadding="16dp"
             android:text="Средний"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/ts_status_low"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="56dp"
             android:drawableStart="@drawable/baseline_keyboard_double_arrow_down_24"
             android:gravity="center_vertical"
             android:paddingLeft="30dp"
+            android:fontFamily="@font/roboto"
+            android:drawablePadding="16dp"
             android:text="Низкий"
             android:textSize="16sp" />
 

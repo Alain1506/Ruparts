@@ -9,7 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.navigationdrawer.helperclasses.TaskBodyObject;
+import com.example.navigationdrawer.helperclasses.TaskObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int parentPosition) {
-        return filtered.get(parentPosition).items.size();
+        return filtered.get(parentPosition).itemsList.size();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int parentPosition, int childPosition) {
-        return filtered.get(parentPosition).items.get(childPosition);
+        return filtered.get(parentPosition).itemsList.get(childPosition);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int parentPosition, boolean b, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = inflater.inflate(R.layout.list_group, null);
+            view = inflater.inflate(R.layout.task_explist_group, null);
         }
 
         ExpListGroup elg = (ExpListGroup) getGroup(parentPosition);
@@ -87,10 +87,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int parentPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = inflater.inflate(R.layout.list_item, null);
+            view = inflater.inflate(R.layout.task_explist_item, null);
         }
 
-        TaskBodyObject tbo = (TaskBodyObject) getChild(parentPosition, childPosition);
+        TaskObject tbo = (TaskObject) getChild(parentPosition, childPosition);
 
         ImageView tboPriority = view.findViewById(R.id.item_priority);
         TextView tboName = view.findViewById(R.id.item_name);
@@ -98,10 +98,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView tboDate = view.findViewById(R.id.item_date);
         TextView notification = view.findViewById(R.id.item_note);
 
-        tboName.setText(tbo.title);
+        tboName.setText(tbo.taskTitle);
 
-        if (tbo.finish_at != null) {
-            Date finishDate = tbo.finish_at;
+        if (tbo.taskFinishAt != null) {
+            Date finishDate = tbo.taskFinishAt;
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
             String formattedDate = simpleDateFormat.format(finishDate);
             tboDate.setText(formattedDate);
@@ -109,9 +109,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             tboDate.setText("");
         }
 
-        tboComment.setText(tbo.description);
+        tboComment.setText(tbo.taskDescription);
 
-        switch (tbo.priority) {
+        switch (tbo.taskPriority) {
             case  ("high"):
                 tboPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
                 break;
@@ -123,17 +123,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 break;
         }
 
-//        changeableDate.set(Calendar.YEAR, year);
-//        changeableDate.set(Calendar.MONTH, monthOfYear);
-//        changeableDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         Date fatal = calendar.getTime();
-
-//        Calendar calendar1 = Calendar.getInstance();
-//        calendar1.add(Calendar.DATE, 1);
-//        Date tomorrow = calendar1.getTime();
 
         Calendar calendar2 = Calendar.getInstance();
         calendar2.add(Calendar.DATE, 1);
@@ -143,17 +135,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         calendar3.add(Calendar.DATE, 2);
         Date normalDate = calendar3.getTime();
 
-        if (tbo.finish_at == null) {
+        if (tbo.taskFinishAt == null) {
             notification.setText("");
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_white));
-        } else if (tbo.finish_at != null && tbo.finish_at.before(fatal)) {
+        } else if (tbo.taskFinishAt != null && tbo.taskFinishAt.before(fatal)) {
             notification.setText("просрочено");
             notification.setTextColor(c.getColor(R.color.white));
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_red));
-        } else if (tbo.finish_at != null && tbo.finish_at.after(fatal) && tbo.finish_at.before(twoDaysElse)) {
+        } else if (tbo.taskFinishAt != null && tbo.taskFinishAt.after(fatal) && tbo.taskFinishAt.before(twoDaysElse)) {
             notification.setText("остался 1 день");
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
-        } else if (tbo.finish_at != null && tbo.finish_at.after(twoDaysElse) && tbo.finish_at.before(normalDate)) {
+        } else if (tbo.taskFinishAt != null && tbo.taskFinishAt.after(twoDaysElse) && tbo.taskFinishAt.before(normalDate)) {
             notification.setText("осталось 2 дня");
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
         } else {
@@ -178,11 +170,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             filtered.addAll(groups);
         } else {
             for (ExpListGroup elg: groups) {
-                ArrayList<TaskBodyObject> childList = elg.items;
-                ArrayList<TaskBodyObject> newList = new ArrayList<>();
+                ArrayList<TaskObject> childList = elg.itemsList;
+                ArrayList<TaskObject> newList = new ArrayList<>();
 
-                for (TaskBodyObject tbo: childList) {
-                    if (tbo.title.toLowerCase().contains(query)) {
+                for (TaskObject tbo: childList) {
+                    if (tbo.taskTitle.toLowerCase().contains(query)) {
                         newList.add(tbo);
                     }
                 }
@@ -190,8 +182,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 if (!newList.isEmpty()) {
                     String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
                     ExpListGroup newExpListGroup = new ExpListGroup(name);
-                    newExpListGroup.items = newList;
-                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.items.size() + ")";
+                    newExpListGroup.itemsList = newList;
+                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
                     filtered.add(newExpListGroup);
                 }
             }

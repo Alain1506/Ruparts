@@ -15,10 +15,11 @@
     <TextView
         android:id="@+id/choose_implementer_task_structure"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="56dp"
         android:layout_below="@id/drag_handle_view_implementer_task_structure"
         android:gravity="center_vertical"
         android:paddingLeft="35dp"
+        android:fontFamily="@font/roboto"
         android:text="Выберите исполнителя:"
         android:textSize="16dp"
         android:textStyle="bold">
@@ -30,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/choose_implementer_task_structure"
+        android:fontFamily="@font/roboto"
         android:layout_marginStart="20dp" />
 
 

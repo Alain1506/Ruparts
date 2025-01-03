@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TasksAll">
+    tools:context=".TasksAllFragment">
 
     <ExpandableListView
         android:id="@+id/tasks_exp_list_view_all"
