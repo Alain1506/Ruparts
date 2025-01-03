@@ -1,4 +1,4 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

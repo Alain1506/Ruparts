@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.navigationdrawer"
+    namespace = "com.ruparts"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.navigationdrawer"
+        applicationId = "com.ruparts"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

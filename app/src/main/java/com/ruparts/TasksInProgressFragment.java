@@ -1,4 +1,4 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.example.navigationdrawer.helperclasses.TaskObject;
+import com.ruparts.helperclasses.TaskObject;
 
 import java.util.ArrayList;
 

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NavigationDrawer"
+rootProject.name = "Ruparts"
 include(":app")
  

@@ -1,7 +1,7 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
-import static com.example.navigationdrawer.MainActivity.libraryMaps;
-import static com.example.navigationdrawer.MainActivity.token;
+import static com.ruparts.MainActivity.libraryMaps;
+import static com.ruparts.MainActivity.token;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -26,8 +26,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.navigationdrawer.helperclasses.TaskObject;
-import com.example.navigationdrawer.helperclasses.TaskObjectRequest;
+import com.ruparts.helperclasses.TaskObject;
+import com.ruparts.helperclasses.TaskObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.android.material.tabs.TabLayout;

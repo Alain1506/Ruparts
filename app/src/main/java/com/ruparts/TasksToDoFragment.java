@@ -1,4 +1,6 @@
-package com.example.navigationdrawer;
+package com.ruparts;
+
+import static com.ruparts.TasksActivity.expListContents;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -18,24 +20,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.example.navigationdrawer.helperclasses.TaskObject;
+import com.ruparts.helperclasses.TaskObject;
 
 import java.util.ArrayList;
 
-public class TasksCancelledFragment extends Fragment {
+public class TasksToDoFragment extends Fragment {
 
     private Context context;
-    private ExpandableListView list_view;
-    private ArrayList<ExpListGroup> filtered = new ArrayList<>();
-    ExpandableListAdapter adapter;
-
+    private ExpandableListView listView;
+    private ArrayList<ExpListGroup> filteredContents = new ArrayList<>();
+    private ExpandableListAdapter adapter;
     private SearchView searchView;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.context = this.getActivity();
-        return inflater.inflate(R.layout.fragment_tasks_cancelled, container, false);
+        return inflater.inflate(R.layout.fragment_tasks_to_do, container, false);
     }
 
     @Override
@@ -53,7 +55,7 @@ public class TasksCancelledFragment extends Fragment {
         assert searchView != null;
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setQueryHint("Поиск");
-        searchView.setIconifiedByDefault(true);
+//        searchView.setIconifiedByDefault(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -73,19 +75,19 @@ public class TasksCancelledFragment extends Fragment {
     }
 
     public void loadListView() {
-        list_view.setGroupIndicator(null);
-        list_view.setChildIndicator(null);
-        list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
-        list_view.setDivider(getResources().getDrawable(R.color.based_background));
-        list_view.setDividerHeight(20);
-        createListData("cancelled");
-        adapter = new ExpandableListAdapter(context, filtered);
-        list_view.setAdapter(adapter);
-        list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        listView.setGroupIndicator(null);
+        listView.setChildIndicator(null);
+        listView.setChildDivider(context.getDrawable(R.color.based_background));
+        listView.setDivider(context.getDrawable(R.color.based_background));
+        listView.setDividerHeight(20);
+        createListData("to_do");
+        adapter = new ExpandableListAdapter(context, filteredContents);
+        listView.setAdapter(adapter);
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
-                ExpListGroup elg = filtered.get(parentPosition);
+                ExpListGroup elg = filteredContents.get(parentPosition);
                 TaskObject tbo = elg.itemsList.get(childPosition);
 
                 Intent intent = new Intent(context, TasksStructure.class);
@@ -100,59 +102,59 @@ public class TasksCancelledFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        list_view = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_cancelled);
+        listView = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_To_Do);
         this.loadListView();
 //        list_view.setGroupIndicator(null);
 //        list_view.setChildIndicator(null);
 //        list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
 //        list_view.setDivider(getResources().getDrawable(R.color.based_background));
 //        list_view.setDividerHeight(20);
-//        createListData("cancelled");
+//        createListData("to_do");
 //        adapter = new ExpandableListAdapter(context, filtered);
 //        list_view.setAdapter(adapter);
+//
 //        list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 //            @Override
-//            public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
+//        public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 //
-//                ExpListGroup elg = filtered.get(parentPosition);
-//                TaskBodyObject tbo = elg.items.get(childPosition);
+//            ExpListGroup elg = filtered.get(parentPosition);
+//            TaskBodyObject tbo = elg.items.get(childPosition);
 //
-//                Intent intent = new Intent(context, TasksStructure.class);
-//                intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
-//                startActivity(intent);
+//            Intent intent = new Intent(context, TasksStructure.class);
+//            intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
+//            startActivity(intent);
 //
-//                return false;
-//            }
+//            return false;
+//        }
 //        });
     }
+
     private void createListData(String status) {
 
-        status = status.toLowerCase();
-        filtered.clear();
+        filteredContents.clear();
 
-        if (status.isEmpty()) {
-            filtered.addAll(TasksActivity.expListContents);
-        } else {
-            for (ExpListGroup elg: TasksActivity.expListContents) {
-                ArrayList<TaskObject> childList = elg.itemsList;
-                ArrayList<TaskObject> newList = new ArrayList<>();
+        for (ExpListGroup elg : expListContents) {
+            ArrayList<TaskObject> childList = elg.itemsList;
+            ArrayList<TaskObject> newList = new ArrayList<>();
 
-                for (TaskObject tbo: childList) {
-                    if (tbo.taskStatus.equals(status)) {
-                        newList.add(tbo);
-                    }
-                }
-
-                if (!newList.isEmpty()) {
-                    String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
-                    ExpListGroup newExpListGroup = new ExpListGroup(name);
-                    newExpListGroup.itemsList = newList;
-                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
-                    filtered.add(newExpListGroup);
+            for (TaskObject task : childList) {
+                if (task.taskStatus.equals(status)) {
+                    newList.add(task);
                 }
             }
+
+            if (!newList.isEmpty()) {
+                String name = elg.elgTaskTypeToShow.substring(0, elg.elgTaskTypeToShow.length() - 3);
+                ExpListGroup newExpListGroup = new ExpListGroup(name);
+                newExpListGroup.itemsList = newList;
+                newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
+                filteredContents.add(newExpListGroup);
+            }
         }
+
     }
+
+
 
 
 }

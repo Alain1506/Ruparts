@@ -1,4 +1,4 @@
-package com.example.navigationdrawer.helperclasses;
+package com.ruparts.helperclasses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

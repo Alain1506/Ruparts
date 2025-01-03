@@ -1,4 +1,4 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
 
 import android.annotation.SuppressLint;
@@ -18,9 +18,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.navigationdrawer.helperclasses.AuthorizationMap;
-import com.example.navigationdrawer.helperclasses.LibraryMaps;
-import com.example.navigationdrawer.helperclasses.LibraryRequest;
+import com.ruparts.helperclasses.AuthorizationMap;
+import com.ruparts.helperclasses.LibraryMaps;
+import com.ruparts.helperclasses.LibraryRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;

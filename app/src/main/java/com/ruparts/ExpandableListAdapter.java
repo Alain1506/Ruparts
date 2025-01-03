@@ -1,4 +1,4 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.navigationdrawer.helperclasses.TaskObject;
+import com.ruparts.helperclasses.TaskObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

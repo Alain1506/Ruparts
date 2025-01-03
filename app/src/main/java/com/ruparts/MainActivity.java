@@ -1,4 +1,4 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
 
 import android.content.DialogInterface;
@@ -23,7 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.navigationdrawer.helperclasses.LibraryMaps;
+import com.ruparts.helperclasses.LibraryMaps;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.HashMap;

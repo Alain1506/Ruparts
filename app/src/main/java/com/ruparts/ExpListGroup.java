@@ -1,6 +1,6 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
-import com.example.navigationdrawer.helperclasses.TaskObject;
+import com.ruparts.helperclasses.TaskObject;
 
 import java.util.ArrayList;
 

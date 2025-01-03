@@ -1,10 +1,10 @@
-package com.example.navigationdrawer;
+package com.ruparts;
 
-import static com.example.navigationdrawer.MainActivity.libraryMaps;
-import static com.example.navigationdrawer.MainActivity.token;
-import static com.example.navigationdrawer.TasksActivity.expListContents;
-import static com.example.navigationdrawer.TasksActivity.listOfTasks;
-import static com.example.navigationdrawer.TasksActivity.mapOfTasks;
+import static com.ruparts.MainActivity.libraryMaps;
+import static com.ruparts.MainActivity.token;
+import static com.ruparts.TasksActivity.expListContents;
+import static com.ruparts.TasksActivity.listOfTasks;
+import static com.ruparts.TasksActivity.mapOfTasks;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -34,9 +34,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.navigationdrawer.helperclasses.TaskObject;
-import com.example.navigationdrawer.helperclasses.TaskStatusRequest;
-import com.example.navigationdrawer.helperclasses.TaskUpdateRequest;
+import com.ruparts.helperclasses.TaskObject;
+import com.ruparts.helperclasses.TaskStatusRequest;
+import com.ruparts.helperclasses.TaskUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
