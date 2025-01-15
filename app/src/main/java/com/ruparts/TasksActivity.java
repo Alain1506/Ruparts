@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -26,11 +25,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.ruparts.helperclasses.TaskObject;
+import com.ruparts.context.task.model.TaskId;
+import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.service.TaskRepository;
 import com.ruparts.helperclasses.TaskObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.android.material.tabs.TabLayout;
+import com.ruparts.main.ApiClient;
+import com.ruparts.main.Container;
+import com.ruparts.main.CrashHandler;
 
 import org.json.JSONObject;
 
@@ -67,6 +71,23 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tasks);
+
+        Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                TaskRepository x = Container.getTaskRepository();
+                TaskObject y = x.getById(new TaskId(1));
+                y = y;
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         //добавить видимость еще одного layout.xml
         LayoutInflater layInfl = this.getLayoutInflater();
@@ -200,6 +221,7 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
                         startActivity(intent);
                     }
 
+//                    JSONObject jo =
                     String jsonListOfTasks = jsonObject[0].getJSONObject("data").getJSONArray("list").toString();
 
                     listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,

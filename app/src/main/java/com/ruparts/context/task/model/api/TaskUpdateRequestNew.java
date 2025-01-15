@@ -1,0 +1,44 @@
+package com.ruparts.context.task.model.api;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.main.Defaults;
+
+import java.text.SimpleDateFormat;
+
+public class TaskUpdateRequestNew {
+
+    @JsonProperty("id")
+    public Integer id;
+
+    @JsonProperty("title")
+    public String title;
+
+    @JsonProperty("description")
+    public String description;
+
+    @JsonProperty("priority")
+    public String priority;
+
+    @JsonProperty("finish_at")
+    public String finishAt;
+
+    @JsonProperty("implementer")
+    public String implementer;
+
+    public TaskUpdateRequestNew(TaskObject task) {
+
+        id = (task.taskId == 0) ? 0 : task.taskId;
+        title = (task.taskTitle == null) ? null : task.taskTitle;
+        description = (task.taskDescription == null) ? null : task.taskDescription;
+        priority = (task.taskPriority == null) ? null : task.taskPriority;
+        implementer = (task.taskImplementer == null) ? null : task.taskImplementer;
+
+        if (task.taskFinishAt == null) {
+            finishAt = "";
+        } else {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Defaults.DATE_FORMAT);
+            finishAt = simpleDateFormat.format(task.taskFinishAt);
+        }
+    }
+}

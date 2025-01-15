@@ -9,8 +9,10 @@ import java.util.Map;
 public class TaskObjectRequest {
     @JsonProperty("id")
     public String id;
+
     @JsonProperty("action")
     public String action;
+
     @JsonProperty("data")
     public TaskDataObject dataObject;
 
@@ -22,20 +24,28 @@ public class TaskObjectRequest {
 
         @JsonProperty("title")
         public String title;
+
         @JsonProperty("author_id")
         public String author_id;
+
         @JsonProperty("status")
         public String status;
+
         @JsonProperty("type")
         public String type;
+
         @JsonProperty("implementer")
         public String implementer;
+
         @JsonProperty("finish_date_before")
         public Date finishDateBefore;
+
         @JsonProperty("finish_date_after")
         public Date finishDateAfter;
+
         @JsonProperty("_pagination")
         public Map<String, Integer> pagination;
+
         @JsonProperty("_sorting")
         public Map<String, String> sorting;
 

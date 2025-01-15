@@ -1,6 +1,7 @@
 package com.ruparts.helperclasses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ruparts.context.task.model.TaskObject;
 
 public class TaskStatusRequest {
 

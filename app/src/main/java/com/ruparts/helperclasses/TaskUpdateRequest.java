@@ -1,11 +1,10 @@
 package com.ruparts.helperclasses;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ruparts.context.task.model.TaskObject;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class TaskUpdateRequest {
@@ -17,8 +16,8 @@ public class TaskUpdateRequest {
     @JsonProperty("data")
     public TaskUpdateObject dataObject;
 
-    public TaskUpdateRequest(TaskObject tbo) {
-        dataObject = new TaskUpdateObject(tbo);
+    public TaskUpdateRequest(TaskObject task) {
+        dataObject = new TaskUpdateObject(task);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

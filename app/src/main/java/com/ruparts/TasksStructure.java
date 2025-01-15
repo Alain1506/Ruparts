@@ -8,16 +8,13 @@ import static com.ruparts.TasksActivity.mapOfTasks;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,7 +31,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.ruparts.helperclasses.TaskObject;
+import com.ruparts.context.task.model.TaskObject;
 import com.ruparts.helperclasses.TaskStatusRequest;
 import com.ruparts.helperclasses.TaskUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;

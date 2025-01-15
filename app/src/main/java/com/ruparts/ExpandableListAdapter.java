@@ -9,7 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruparts.helperclasses.TaskObject;
+import com.ruparts.context.task.model.TaskObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

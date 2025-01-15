@@ -1,6 +1,6 @@
 package com.ruparts;
 
-import com.ruparts.helperclasses.TaskObject;
+import com.ruparts.context.task.model.TaskObject;
 
 import java.util.ArrayList;
 
