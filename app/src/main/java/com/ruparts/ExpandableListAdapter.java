@@ -1,5 +1,7 @@
 package com.ruparts;
 
+import static com.ruparts.TasksActivity.taskRepository;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,12 +11,15 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.service.TaskRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -22,6 +27,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private ArrayList<ExpListGroup> groups;
     private ArrayList<ExpListGroup> filtered;
     private LayoutInflater inflater;
+
 
     public ExpandableListAdapter(Context c, ArrayList<ExpListGroup> groups) {
         this.c = c;
@@ -163,31 +169,50 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public void filterData (String query) {
 
-        query = query.toLowerCase();
-        filtered.clear();
+        TaskFilter taskFilter = new TaskFilter();
+        taskFilter.search = query;
+        List<TaskObject> list = taskRepository.getByFilter(taskFilter);
 
-        if (query.isEmpty()) {
-            filtered.addAll(groups);
-        } else {
-            for (ExpListGroup elg: groups) {
-                ArrayList<TaskObject> childList = elg.itemsList;
-                ArrayList<TaskObject> newList = new ArrayList<>();
+        for (ExpListGroup elg : TasksActivity.expListContents) {
+            ArrayList<TaskObject> newList = new ArrayList<>();
 
-                for (TaskObject tbo: childList) {
-                    if (tbo.taskTitle.toLowerCase().contains(query)) {
-                        newList.add(tbo);
-                    }
-                }
-
-                if (!newList.isEmpty()) {
-                    String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
-                    ExpListGroup newExpListGroup = new ExpListGroup(name);
-                    newExpListGroup.itemsList = newList;
-                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
-                    filtered.add(newExpListGroup);
+            for (TaskObject task : list) {
+                if (task.taskType.equals(elg.elgTaskType)) {
+                    newList.add(task);
                 }
             }
+
+            if (!newList.isEmpty()) {
+                String name = elg.elgTaskTypeToShow.substring(0, elg.elgTaskTypeToShow.length() - 3);
+                ExpListGroup newExpListGroup = new ExpListGroup(name);
+                newExpListGroup.itemsList = newList;
+                newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
+                filtered.add(newExpListGroup);
+            }
         }
+
+//        if (query.isEmpty()) {
+//            filtered.addAll(groups);
+//        } else {
+//            for (ExpListGroup elg: groups) {
+//                ArrayList<TaskObject> childList = elg.itemsList;
+//                ArrayList<TaskObject> newList = new ArrayList<>();
+//
+//                for (TaskObject task: childList) {
+//                    if (task.taskTitle.toLowerCase().contains(query)) {
+//                        newList.add(task);
+//                    }
+//                }
+//
+//                if (!newList.isEmpty()) {
+//                    String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
+//                    ExpListGroup newExpListGroup = new ExpListGroup(name);
+//                    newExpListGroup.itemsList = newList;
+//                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
+//                    filtered.add(newExpListGroup);
+//                }
+//            }
+//        }
         notifyDataSetChanged();
 
     }

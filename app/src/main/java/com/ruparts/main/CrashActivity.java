@@ -47,8 +47,5 @@ public class CrashActivity extends AppCompatActivity {
                 System.exit(1);
             }
         });
-
-
-
     }
 }

@@ -32,6 +32,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.model.TaskStatusEnum;
 import com.ruparts.helperclasses.TaskStatusRequest;
 import com.ruparts.helperclasses.TaskUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -148,8 +149,8 @@ public class TasksStructure extends AppCompatActivity {
                         + Objects.requireNonNull(libraryMaps.taskTypes.get(task.taskType)).substring(1);
                 taskType.setText(textForTaskTypeField);
 
-                String textForTaskStatusField = Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(0, 1).toUpperCase()
-                        + Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(1);
+                String textForTaskStatusField = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
+                        + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
                 taskStatus.setText(textForTaskStatusField);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy");
@@ -158,15 +159,15 @@ public class TasksStructure extends AppCompatActivity {
 
                 taskImplementer.setText(libraryMaps.implementer.get(task.taskImplementer));
 
-                if (task.taskStatus.equals("to_do")) {
+                if (task.status.equals("to_do")) {
                     btnInWork.setText("В работу");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_play_arrow_24));
-                } else if (task.taskStatus.equals("in_progress")) {
+                } else if (task.status.equals("in_progress")) {
                     btnInWork.setText("Закрыть");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                 } else {
-                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(0, 1).toUpperCase()
-                            + Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(1);
+                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
+                            + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
                     btnInWork.setText(textForButton);
                     btnInWork.setBackgroundColor(getResources().getColor(R.color.white));
                     btnInWork.setTextColor(getResources().getColor(R.color.gray));
@@ -239,21 +240,21 @@ public class TasksStructure extends AppCompatActivity {
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
-                    if (task.taskStatus.equals("to_do")) {
-                        task.taskStatus = "in_progress";
+                    if (task.status.equals("to_do")) {
+                        task.status = TaskStatusEnum.IN_PROGRESS;
                         changeTaskStatus(task);
-                        taskStatus.setText(libraryMaps.status.get(task.taskStatus));
+                        taskStatus.setText(libraryMaps.status.get(task.status));
                         btnInWork.setText("Закрыть");
                         btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                         saveChanges(task);
 
-                    } else if (task.taskStatus.equals("in_progress")) {
-                        task.taskStatus = "completed";
+                    } else if (task.status.equals("in_progress")) {
+                        task.status = TaskStatusEnum.COMPLETED;
                         changeTaskStatus(task);
-                        taskStatus.setText(libraryMaps.status.get(task.taskStatus));
+                        taskStatus.setText(libraryMaps.status.get(task.status));
                         btnCancelled.setVisibility(View.INVISIBLE);
-                        String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(0, 1).toUpperCase()
-                                + Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(1);
+                        String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
+                                + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
                         btnInWork.setText(textForButton);
                         btnInWork.setTextColor(R.color.gray);
                         btnInWork.setBackgroundColor(R.color.white);
@@ -267,11 +268,11 @@ public class TasksStructure extends AppCompatActivity {
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
-                    task.taskStatus = "cancelled";
+                    task.status = TaskStatusEnum.COMPLETED;
                     changeTaskStatus(task);
-                    taskStatus.setText(libraryMaps.status.get(task.taskStatus));
-                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(0, 1).toUpperCase()
-                            + Objects.requireNonNull(libraryMaps.status.get(task.taskStatus)).substring(1);
+                    taskStatus.setText(libraryMaps.status.get(task.status));
+                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
+                            + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
                     btnInWork.setText(textForButton);
                     btnInWork.setTextColor(R.color.gray);
                     btnInWork.setBackgroundColor(R.color.white);
@@ -378,7 +379,7 @@ public class TasksStructure extends AppCompatActivity {
                             String receivedTask = jsonObject[0].getJSONObject("data").toString();
 
                             TaskObject savedTask = objectMapper.readValue(receivedTask, TaskObject.class);
-                            mapOfTasks.put(savedTask.taskId, savedTask);
+                            mapOfTasks.put(savedTask.id, savedTask);
 
                             for (int i = 0; i < expListContents.size(); i++) {
                                 if (expListContents.get(i).elgTaskType.equals(savedTask.taskType)) {
@@ -387,7 +388,7 @@ public class TasksStructure extends AppCompatActivity {
                             }
 
                             for (int i = 0; i < listOfTasks.size(); i++) {
-                                if (listOfTasks.get(i).taskId == savedTask.taskId) {
+                                if (listOfTasks.get(i).id == savedTask.id) {
                                     listOfTasks.set(i, savedTask);
                                 }
                             }
@@ -445,7 +446,7 @@ public class TasksStructure extends AppCompatActivity {
                     String receivedTask = jsonObject[0].getJSONObject("data").toString();
 
                     TaskObject changedTask = objectMapper.readValue(receivedTask, TaskObject.class);
-                    mapOfTasks.put(changedTask.taskId, changedTask);
+                    mapOfTasks.put(changedTask.id, changedTask);
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);

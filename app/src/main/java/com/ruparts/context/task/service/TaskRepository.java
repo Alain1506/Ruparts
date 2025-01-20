@@ -3,6 +3,7 @@ package com.ruparts.context.task.service;
 import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.model.TaskObject2;
 import com.ruparts.context.task.model.api.TaskListRequest;
 import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
 
@@ -22,10 +23,10 @@ public class TaskRepository {
     public TaskObject getById(TaskId taskId) {
         // вызов АПИ получения одной задачи (task)
         if (this.taskObjectsCache.containsKey(taskId)) {
-            return this.taskObjectsCache.get(taskId);
+            //return this.taskObjectsCache.get(taskId);
         }
         TaskObject task = this.apiClient.read(taskId);
-        this.taskObjectsCache.put(task.id, task);
+        //this.taskObjectsCache.put(task.id, task);
 
         return task;
     }

@@ -3,6 +3,7 @@ package com.ruparts.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler{
     private StringBuilder errorMessage = new StringBuilder();
     private StringBuilder softwareInfo = new StringBuilder();
     private StringBuilder dateInfo = new StringBuilder();
-    Context context;
+    private Context context;
 
     public CrashHandler(Context context) {
         this.context = context;
@@ -54,9 +55,13 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler{
         intent.putExtra("Date" , dateInfo.toString());
 
         context.startActivity(intent);
+        try {
+            Looper.getMainLooper().wait();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
-
     }
 }

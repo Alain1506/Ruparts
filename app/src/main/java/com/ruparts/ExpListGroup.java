@@ -16,7 +16,7 @@ public class ExpListGroup {
 
     public void updateTask(TaskObject task) {
         for (int i = 0; i < itemsList.size(); i++) {
-            if (itemsList.get(i).taskId == task.taskId) {
+            if (itemsList.get(i).id == task.id) {
                 itemsList.set(i, task);
             }
         }

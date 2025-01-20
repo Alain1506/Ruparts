@@ -22,8 +22,8 @@ public class TaskObject implements Serializable {
     @JsonUnwrapped
     public TaskId id;
 
-    @JsonProperty("id")
-    public int taskId;
+//    @JsonProperty("id")
+//    public int taskId;
 
     @JsonProperty("author")
     public TaskBodyDataAuthor taskBodyDataAuthor;
@@ -40,8 +40,8 @@ public class TaskObject implements Serializable {
     @JsonProperty("status")
     public TaskStatusEnum status;
 
-    @JsonProperty("status")
-    public String taskStatus;
+//    @JsonProperty("status")
+//    public String taskStatus;
 
     @JsonProperty("priority")
     public String taskPriority;

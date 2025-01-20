@@ -1,5 +1,8 @@
 package com.ruparts;
 
+import static com.ruparts.TasksActivity.fragmentPagerAdapter;
+import static com.ruparts.TasksActivity.taskRepository;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.model.TaskStatusEnum;
+import com.ruparts.context.task.service.TaskRepository;
+import com.ruparts.main.Container;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TasksInProgressFragment extends Fragment {
 
@@ -30,6 +38,7 @@ public class TasksInProgressFragment extends Fragment {
     ExpandableListAdapter adapter;
 
     private SearchView searchView;
+
 
     @Nullable
     @Override
@@ -78,7 +87,7 @@ public class TasksInProgressFragment extends Fragment {
         list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDivider(getResources().getDrawable(R.color.based_background));
         list_view.setDividerHeight(20);
-        createListData("in_progress");
+        filtered = fragmentPagerAdapter.createListData(TaskStatusEnum.IN_PROGRESS);
         adapter = new ExpandableListAdapter(context, filtered);
         list_view.setAdapter(adapter);
         list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -102,55 +111,7 @@ public class TasksInProgressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         list_view = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_in_progress);
         this.loadListView();
-//        list_view.setGroupIndicator(null);
-//        list_view.setChildIndicator(null);
-//        list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
-//        list_view.setDivider(getResources().getDrawable(R.color.based_background));
-//        list_view.setDividerHeight(20);
-//        createListData("in_progress");
-//        adapter = new ExpandableListAdapter(context, filtered);
-//        list_view.setAdapter(adapter);
-//        list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//            @Override
-//            public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
-//
-//                ExpListGroup elg = filtered.get(parentPosition);
-//                TaskBodyObject tbo = elg.items.get(childPosition);
-//
-//                Intent intent = new Intent(context, TasksStructure.class);
-//                intent.putExtra(TaskBodyObject.class.getSimpleName(), tbo);
-//                startActivity(intent);
-//
-//                return false;
-//            }
-//        });
     }
-
-    private void createListData(String status) {
-
-        filtered.clear();
-
-        for (ExpListGroup elg : TasksActivity.expListContents) {
-            ArrayList<TaskObject> childList = elg.itemsList;
-            ArrayList<TaskObject> newList = new ArrayList<>();
-
-            for (TaskObject tbo : childList) {
-                if (tbo.taskStatus.equals(status)) {
-                    newList.add(tbo);
-                }
-            }
-
-            if (!newList.isEmpty()) {
-                String name = elg.elgTaskTypeToShow.substring(0, elg.elgTaskTypeToShow.length() - 3);
-                ExpListGroup newExpListGroup = new ExpListGroup(name);
-                newExpListGroup.itemsList = newList;
-                newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
-                filtered.add(newExpListGroup);
-            }
-        }
-
-    }
-
 
 
 }

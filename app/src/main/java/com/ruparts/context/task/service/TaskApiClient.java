@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.model.TaskObject2;
 import com.ruparts.context.task.model.api.TaskListRequest;
 import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
 import com.ruparts.main.ApiClient;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class TaskApiClient {
 
-    ApiClient client;
+    private ApiClient client;
 
     public TaskApiClient(ApiClient client) {
         this.client = client;

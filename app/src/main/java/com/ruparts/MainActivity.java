@@ -23,10 +23,20 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.ruparts.context.task.model.TaskId;
+import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.service.TaskRepository;
 import com.ruparts.helperclasses.LibraryMaps;
 import com.google.android.material.navigation.NavigationView;
+import com.ruparts.main.Container;
+import com.ruparts.main.CrashHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -49,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
@@ -88,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Button logout = vv.findViewById(R.id.logout_button);
 
+        // TODO стереть (это для дебага)
+//        Intent intent = new Intent(this, TasksActivity.class);
+//        startActivity(intent);
     }
 
     @Override

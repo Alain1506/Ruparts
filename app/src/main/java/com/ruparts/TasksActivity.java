@@ -7,6 +7,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,14 +29,16 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.model.TaskObject2;
+import com.ruparts.context.task.model.api.TaskListRequest;
+import com.ruparts.context.task.service.TaskApiClient;
 import com.ruparts.context.task.service.TaskRepository;
 import com.ruparts.helperclasses.TaskObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.android.material.tabs.TabLayout;
-import com.ruparts.main.ApiClient;
 import com.ruparts.main.Container;
-import com.ruparts.main.CrashHandler;
+import com.ruparts.main.exception.api.NotAuthorizedException;
 
 import org.json.JSONObject;
 
@@ -45,6 +49,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -56,14 +66,19 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
 
 
     public static List<TaskObject> listOfTasks = new ArrayList<>();
-    public static Map<Integer, TaskObject> mapOfTasks = new HashMap<>();
+    public static Map<TaskId, TaskObject> mapOfTasks = new HashMap<>();
     public static ArrayList<ExpListGroup> expListContents;
+    public static TaskRepository taskRepository;
+    public static TasksViewPager2Adapter fragmentPagerAdapter;
 
     private SearchManager searchManager;
     private ExpandableListAdapter adapter;
     private TabLayout tabLayout;
     private ViewPager2 fragmentPager;
-    private TasksViewPager2Adapter fragmentPagerAdapter;
+
+
+
+
 
 
     @Override
@@ -72,22 +87,22 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tasks);
 
-        Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
+        ArrayList<TaskObject> tasks = new ArrayList<>();
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                TaskRepository x = Container.getTaskRepository();
-                TaskObject y = x.getById(new TaskId(1));
-                y = y;
-            }
-        });
-        thread.start();
         try {
-            thread.join();
-        } catch (InterruptedException e) {
+//            TaskRepository x = Container.getTaskRepository();
+            taskRepository = Container.getTaskRepository();
+//            TaskObject2 y = x.getById(new TaskId(1));
+//            y = y;
+        } catch (NotAuthorizedException e) {
+            Intent intent = new Intent(this, AuthorizationActivity.class);
+            startActivity(intent);
+            return;
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+
+//        if(true) return;
 
         //добавить видимость еще одного layout.xml
         LayoutInflater layInfl = this.getLayoutInflater();
@@ -174,74 +189,83 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
 
     private ArrayList<ExpListGroup> initializeExpListContents() {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        TaskObjectRequest taskObject = new TaskObjectRequest();
-        taskObject.action = "app.task.list";
-        taskObject.id = "325ege324ll23el42uicc";
 
-        final String taskObjectAsString;
-        try {
-            taskObjectAsString = objectMapper.writeValueAsString(taskObject);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
+        TaskListRequest taskListRequest = new TaskListRequest();
+        listOfTasks = taskApiClient.list(taskListRequest);
+//
+//        apiClient.getObjectMapper();
+//        final JSONObject[] jsonObject = apiClient.callEndpointAndReturnJsonObject()
 
-        final JSONObject[] jsonObject = {null};
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client = new OkHttpClient().newBuilder().build();
-                    MediaType mediaType = MediaType.parse("application/json");
-                    RequestBody body = RequestBody.create(taskObjectAsString, mediaType);
-                    Request request = new Request.Builder()
-                            .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-                            .method("POST", body)
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("Authorization", "Bearer " + token)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    if (response.code() == 401) {
-                        Toast.makeText(TasksActivity.this, "Токен устарел", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(TasksActivity.this, AuthorizationActivity.class);
-                        startActivity(intent);
-                    } else if (response.code() != 200) {
-                        Toast.makeText(TasksActivity.this, "Произошла ошибка загрузки задач", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
-                        startActivity(intent);
-                    }
-                    assert response.body() != null;
-                    String responseString = response.body().string();
-                    jsonObject[0] = new JSONObject(responseString);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        TaskObjectRequest taskObject = new TaskObjectRequest();
+//        taskObject.action = "app.task.list";
+//        taskObject.id = "325ege324ll23el42uicc";
 
-                    if (jsonObject[0].getInt("type") != 0) {
-                        Toast.makeText(TasksActivity.this, "Список задач не получен", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
-                        startActivity(intent);
-                    }
-
-//                    JSONObject jo =
-                    String jsonListOfTasks = jsonObject[0].getJSONObject("data").getJSONArray("list").toString();
-
-                    listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,
-                            TaskObject.class));
-
-                    for (TaskObject task : listOfTasks) {
-                        mapOfTasks.put(task.taskId, task);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        final String taskObjectAsString;
+//        try {
+//            taskObjectAsString = objectMapper.writeValueAsString(taskObject);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        final JSONObject[] jsonObject = {null};
+//
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    OkHttpClient client = new OkHttpClient().newBuilder().build();
+//                    MediaType mediaType = MediaType.parse("application/json");
+//                    RequestBody body = RequestBody.create(taskObjectAsString, mediaType);
+//                    Request request = new Request.Builder()
+//                            .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
+//                            .method("POST", body)
+//                            .addHeader("Content-Type", "application/json")
+//                            .addHeader("Authorization", "Bearer " + token)
+//                            .build();
+//                    Response response = client.newCall(request).execute();
+//                    if (response.code() == 401) {
+////                        Toast.makeText(TasksActivity.this, "Токен устарел", Toast.LENGTH_LONG).show();
+//                        Intent intent = new Intent(TasksActivity.this, AuthorizationActivity.class);
+//                        startActivity(intent);
+//                    } else if (response.code() != 200) {
+//                        Toast.makeText(TasksActivity.this, "Произошла ошибка загрузки задач", Toast.LENGTH_LONG).show();
+//                        Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
+//                        startActivity(intent);
+//                    }
+//                    assert response.body() != null;
+//                    String responseString = response.body().string();
+//                    jsonObject[0] = new JSONObject(responseString);
+//
+//                    if (jsonObject[0].getInt("type") != 0) {
+//                        Toast.makeText(TasksActivity.this, "Список задач не получен", Toast.LENGTH_LONG).show();
+//                        Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
+//                        startActivity(intent);
+//                    }
+//
+////                    JSONObject jo =
+//                    String jsonListOfTasks = jsonObject[0].getJSONObject("data").getJSONArray("list").toString();
+//
+//                    listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,
+//                            TaskObject.class));
+//
+//                    for (TaskObject task : listOfTasks) {
+//                        mapOfTasks.put(task.id, task);
+//                    }
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        thread.start();
+//        try {
+//            thread.join();
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
         ArrayList<ExpListGroup> allGroups = new ArrayList<>();
 

@@ -1,14 +1,16 @@
 package com.ruparts.context.task.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-public final class TaskId {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public  class TaskId {
     @JsonProperty("id")
-    public final int id;
+    public  int id;
 
-    public TaskId(int id) {
+    public TaskId(@JsonProperty("id") int id) {
         this.id = id;
     }
 

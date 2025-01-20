@@ -1,6 +1,8 @@
 package com.ruparts;
 
 import static com.ruparts.TasksActivity.expListContents;
+import static com.ruparts.TasksActivity.fragmentPagerAdapter;
+import static com.ruparts.TasksActivity.taskRepository;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -20,17 +22,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskObject;
+import com.ruparts.context.task.model.TaskStatusEnum;
+import com.ruparts.context.task.service.TaskRepository;
+import com.ruparts.main.Container;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TasksToDoFragment extends Fragment {
 
     private Context context;
-    private ExpandableListView listView;
-    private ArrayList<ExpListGroup> filteredContents = new ArrayList<>();
-    private ExpandableListAdapter adapter;
+    ExpandableListView listView;
+    private ArrayList<ExpListGroup> filtered = new ArrayList<>();
+    ExpandableListAdapter adapter;
     private SearchView searchView;
+
 
 
     @Nullable
@@ -80,14 +88,14 @@ public class TasksToDoFragment extends Fragment {
         listView.setChildDivider(context.getDrawable(R.color.based_background));
         listView.setDivider(context.getDrawable(R.color.based_background));
         listView.setDividerHeight(20);
-        createListData("to_do");
-        adapter = new ExpandableListAdapter(context, filteredContents);
+        filtered = fragmentPagerAdapter.createListData(TaskStatusEnum.TO_DO);
+        adapter = new ExpandableListAdapter(context, filtered);
         listView.setAdapter(adapter);
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
-                ExpListGroup elg = filteredContents.get(parentPosition);
+                ExpListGroup elg = filtered.get(parentPosition);
                 TaskObject tbo = elg.itemsList.get(childPosition);
 
                 Intent intent = new Intent(context, TasksStructure.class);
@@ -129,30 +137,56 @@ public class TasksToDoFragment extends Fragment {
 //        });
     }
 
-    private void createListData(String status) {
-
-        filteredContents.clear();
-
-        for (ExpListGroup elg : expListContents) {
-            ArrayList<TaskObject> childList = elg.itemsList;
-            ArrayList<TaskObject> newList = new ArrayList<>();
-
-            for (TaskObject task : childList) {
-                if (task.taskStatus.equals(status)) {
-                    newList.add(task);
-                }
-            }
-
-            if (!newList.isEmpty()) {
-                String name = elg.elgTaskTypeToShow.substring(0, elg.elgTaskTypeToShow.length() - 3);
-                ExpListGroup newExpListGroup = new ExpListGroup(name);
-                newExpListGroup.itemsList = newList;
-                newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
-                filteredContents.add(newExpListGroup);
-            }
-        }
-
-    }
+//    private void createListData(TaskStatusEnum status) {
+//        List<TaskObject> list = new ArrayList<>();
+//        try {
+//            TaskFilter taskFilter = new TaskFilter();
+//            taskFilter.status = TaskStatusEnum.TO_DO;
+//            list = taskRepository.getByFilter(taskFilter);
+//        } catch (Exception e) {
+//            e.getMessage();
+//        }
+//
+//        for (ExpListGroup elg : TasksActivity.expListContents) {
+//            ArrayList<TaskObject> newList = new ArrayList<>();
+//
+//            for (TaskObject task : list) {
+//                if (task.taskType.equals(elg.elgTaskType)) {
+//                    newList.add(task);
+//                }
+//            }
+//
+//            if (!newList.isEmpty()) {
+//                String name = elg.elgTaskTypeToShow.substring(0, elg.elgTaskTypeToShow.length() - 3);
+//                ExpListGroup newExpListGroup = new ExpListGroup(name);
+//                newExpListGroup.itemsList = newList;
+//                newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
+//                filtered.add(newExpListGroup);
+//            }
+//        }
+//
+////        filteredContents.clear();
+////
+////        for (ExpListGroup elg : expListContents) {
+////            ArrayList<TaskObject> childList = elg.itemsList;
+////            ArrayList<TaskObject> newList = new ArrayList<>();
+////
+////            for (TaskObject task : childList) {
+////                if (task.status.equals(status)) {
+////                    newList.add(task);
+////                }
+////            }
+////
+////            if (!newList.isEmpty()) {
+////                String name = elg.elgTaskTypeToShow.substring(0, elg.elgTaskTypeToShow.length() - 3);
+////                ExpListGroup newExpListGroup = new ExpListGroup(name);
+////                newExpListGroup.itemsList = newList;
+////                newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
+////                filteredContents.add(newExpListGroup);
+////            }
+////        }
+//
+//    }
 
 
 
