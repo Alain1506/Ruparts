@@ -2,11 +2,6 @@ package com.ruparts;
 
 import static com.ruparts.TasksActivity.taskRepository;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
-import android.widget.ExpandableListView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;

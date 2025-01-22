@@ -19,8 +19,9 @@ public class TaskObject implements Serializable {
 //                listOfHistory = new ArrayList<>();
     }
 
+
     @JsonUnwrapped
-    public TaskId id;
+    public transient TaskId id;
 
 //    @JsonProperty("id")
 //    public int taskId;

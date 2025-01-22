@@ -1,6 +1,5 @@
 package com.ruparts;
 
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,20 +22,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.ruparts.context.task.model.TaskId;
-import com.ruparts.context.task.model.TaskObject;
-import com.ruparts.context.task.service.TaskRepository;
 import com.ruparts.helperclasses.LibraryMaps;
 import com.google.android.material.navigation.NavigationView;
-import com.ruparts.main.Container;
+
 import com.ruparts.main.CrashHandler;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -53,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SharedPreferences sharedLibraryImplementer;
     private SharedPreferences sharedLibraryStatus;
     private SharedPreferences sharedLibraryIdReferenceType;
-
 
 
     @Override
@@ -98,10 +88,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setItemTextAppearance(R.style.NavigationDrawerStyle);
 
         Button logout = vv.findViewById(R.id.logout_button);
-
-        // TODO стереть (это для дебага)
-//        Intent intent = new Intent(this, TasksActivity.class);
-//        startActivity(intent);
     }
 
     @Override
@@ -151,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     SharedPreferences.Editor editor6 = sharedLibraryIdReferenceType.edit();
                     editor6.clear();
                     editor6.apply();
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.getMessage();
                 }
 

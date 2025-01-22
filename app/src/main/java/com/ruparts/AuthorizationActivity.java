@@ -110,8 +110,7 @@ public class AuthorizationActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 for (Map.Entry<String, String> entry : map.authCodes.entrySet()) {
                     if (enteredSymbols.equals(entry.getValue())) {
-//                        enteredSymbols = "";
-//                        password.setText(enteredSymbols);
+
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {

@@ -1,7 +1,6 @@
 package com.ruparts;
 
 import static com.ruparts.TasksActivity.fragmentPagerAdapter;
-import static com.ruparts.TasksActivity.taskRepository;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -21,21 +20,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskObject;
 import com.ruparts.context.task.model.TaskStatusEnum;
-import com.ruparts.context.task.service.TaskRepository;
-import com.ruparts.main.Container;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TasksInProgressFragment extends Fragment {
 
     private Context context;
-    private ExpandableListView list_view;
+    private ExpandableListView listView;
     private ArrayList<ExpListGroup> filtered = new ArrayList<>();
-    ExpandableListAdapter adapter;
+    private ExpandableListAdapter adapter;
 
     private SearchView searchView;
 
@@ -82,23 +77,32 @@ public class TasksInProgressFragment extends Fragment {
     }
 
     public void loadListView() {
-        list_view.setGroupIndicator(null);
-        list_view.setChildIndicator(null);
-        list_view.setChildDivider(getResources().getDrawable(R.color.based_background));
-        list_view.setDivider(getResources().getDrawable(R.color.based_background));
-        list_view.setDividerHeight(20);
+        filtered.clear();
+        listView.setGroupIndicator(null);
+        listView.setChildIndicator(null);
+        listView.setChildDivider(context.getDrawable(R.color.based_background));
+        listView.setDivider(context.getDrawable(R.color.based_background));
+        listView.setDividerHeight(20);
         filtered = fragmentPagerAdapter.createListData(TaskStatusEnum.IN_PROGRESS);
         adapter = new ExpandableListAdapter(context, filtered);
-        list_view.setAdapter(adapter);
-        list_view.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        listView.setAdapter(adapter);
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
 
+                filtered = fragmentPagerAdapter.createListData(TaskStatusEnum.IN_PROGRESS);
                 ExpListGroup elg = filtered.get(parentPosition);
-                TaskObject tbo = elg.itemsList.get(childPosition);
+                TaskObject task = elg.itemsList.get(childPosition);
+
+                int number = task.id.id;
 
                 Intent intent = new Intent(context, TasksStructure.class);
-                intent.putExtra(TaskObject.class.getSimpleName(), tbo);
+
+                Bundle extras = new Bundle();
+                extras.putSerializable(TaskObject.class.getSimpleName(), task);
+                extras.putInt("id", number);
+                intent.putExtras(extras);
+
                 startActivity(intent);
 
                 return false;
@@ -109,7 +113,7 @@ public class TasksInProgressFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        list_view = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_in_progress);
+        listView = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_in_progress);
         this.loadListView();
     }
 

@@ -3,7 +3,6 @@ package com.ruparts.context.task.service;
 import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
-import com.ruparts.context.task.model.TaskObject2;
 import com.ruparts.context.task.model.api.TaskListRequest;
 import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
 

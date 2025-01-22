@@ -1,22 +1,17 @@
 package com.ruparts;
 
 import static com.ruparts.MainActivity.libraryMaps;
-import static com.ruparts.MainActivity.token;
 
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,38 +24,20 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
-import com.ruparts.context.task.model.TaskObject2;
+
 import com.ruparts.context.task.model.api.TaskListRequest;
 import com.ruparts.context.task.service.TaskApiClient;
 import com.ruparts.context.task.service.TaskRepository;
-import com.ruparts.helperclasses.TaskObjectRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.android.material.tabs.TabLayout;
 import com.ruparts.main.Container;
 import com.ruparts.main.exception.api.NotAuthorizedException;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.atomic.AtomicReference;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class TasksActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
@@ -77,23 +54,14 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
     private ViewPager2 fragmentPager;
 
 
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tasks);
 
-        ArrayList<TaskObject> tasks = new ArrayList<>();
-
         try {
-//            TaskRepository x = Container.getTaskRepository();
             taskRepository = Container.getTaskRepository();
-//            TaskObject2 y = x.getById(new TaskId(1));
-//            y = y;
         } catch (NotAuthorizedException e) {
             Intent intent = new Intent(this, AuthorizationActivity.class);
             startActivity(intent);
@@ -101,8 +69,6 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-
-//        if(true) return;
 
         //добавить видимость еще одного layout.xml
         LayoutInflater layInfl = this.getLayoutInflater();
@@ -169,103 +135,13 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
             }
         });
 
-
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
-
-                ExpListGroup elg = expListContents.get(parentPosition);
-                TaskObject task = elg.itemsList.get(childPosition);
-
-                Intent intent = new Intent(getBaseContext(), TasksStructure.class);
-                intent.putExtra(TaskObject.class.getSimpleName(), task);
-                startActivity(intent);
-
-                return false;
-            }
-        });
-
     }
 
     private ArrayList<ExpListGroup> initializeExpListContents() {
 
-
         TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
         TaskListRequest taskListRequest = new TaskListRequest();
         listOfTasks = taskApiClient.list(taskListRequest);
-//
-//        apiClient.getObjectMapper();
-//        final JSONObject[] jsonObject = apiClient.callEndpointAndReturnJsonObject()
-
-
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        TaskObjectRequest taskObject = new TaskObjectRequest();
-//        taskObject.action = "app.task.list";
-//        taskObject.id = "325ege324ll23el42uicc";
-
-//        final String taskObjectAsString;
-//        try {
-//            taskObjectAsString = objectMapper.writeValueAsString(taskObject);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        final JSONObject[] jsonObject = {null};
-//
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    OkHttpClient client = new OkHttpClient().newBuilder().build();
-//                    MediaType mediaType = MediaType.parse("application/json");
-//                    RequestBody body = RequestBody.create(taskObjectAsString, mediaType);
-//                    Request request = new Request.Builder()
-//                            .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-//                            .method("POST", body)
-//                            .addHeader("Content-Type", "application/json")
-//                            .addHeader("Authorization", "Bearer " + token)
-//                            .build();
-//                    Response response = client.newCall(request).execute();
-//                    if (response.code() == 401) {
-////                        Toast.makeText(TasksActivity.this, "Токен устарел", Toast.LENGTH_LONG).show();
-//                        Intent intent = new Intent(TasksActivity.this, AuthorizationActivity.class);
-//                        startActivity(intent);
-//                    } else if (response.code() != 200) {
-//                        Toast.makeText(TasksActivity.this, "Произошла ошибка загрузки задач", Toast.LENGTH_LONG).show();
-//                        Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
-//                        startActivity(intent);
-//                    }
-//                    assert response.body() != null;
-//                    String responseString = response.body().string();
-//                    jsonObject[0] = new JSONObject(responseString);
-//
-//                    if (jsonObject[0].getInt("type") != 0) {
-//                        Toast.makeText(TasksActivity.this, "Список задач не получен", Toast.LENGTH_LONG).show();
-//                        Intent intent = new Intent(TasksActivity.this, TasksActivity.class);
-//                        startActivity(intent);
-//                    }
-//
-////                    JSONObject jo =
-//                    String jsonListOfTasks = jsonObject[0].getJSONObject("data").getJSONArray("list").toString();
-//
-//                    listOfTasks = objectMapper.readValue(jsonListOfTasks, TypeFactory.defaultInstance().constructCollectionType(List.class,
-//                            TaskObject.class));
-//
-//                    for (TaskObject task : listOfTasks) {
-//                        mapOfTasks.put(task.id, task);
-//                    }
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        thread.start();
-//        try {
-//            thread.join();
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
 
         ArrayList<ExpListGroup> allGroups = new ArrayList<>();
 
@@ -376,17 +252,6 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
 
         int position = tabLayout.getSelectedTabPosition();
         doInitializeFragmentPage(position);
-
-
-
-
-
-//        tasksViewPager2Adapter.createFragment(viewPager2.getCurrentItem());
-//        String s = null;
-
-
-        //When BACK BUTTON is pressed, the activity on the stack is restarted
-        //Do what you want on the refresh procedure here
     }
 
 

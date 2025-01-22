@@ -7,8 +7,9 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public  class TaskId {
+
     @JsonProperty("id")
-    public  int id;
+    public int id;
 
     public TaskId(@JsonProperty("id") int id) {
         this.id = id;

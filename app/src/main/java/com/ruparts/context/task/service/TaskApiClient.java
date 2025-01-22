@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
-import com.ruparts.context.task.model.TaskObject2;
 import com.ruparts.context.task.model.api.TaskListRequest;
+import com.ruparts.context.task.model.api.TaskStatusRequestNew;
 import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
 import com.ruparts.main.ApiClient;
 import com.ruparts.main.exception.api.DecodeException;
@@ -63,4 +63,17 @@ public class TaskApiClient {
             throw new DecodeException(e);
         }
     }
+
+    public TaskObject updateStatus(TaskStatusRequestNew taskStatusRequest) {
+        JSONObject responseData = this.client.callEndpointAndReturnJsonObject("app.task.status", taskStatusRequest);
+
+        try {
+            TaskObject task = this.client.getObjectMapper().readValue(responseData.toString(), TaskObject.class);
+
+            return task;
+        } catch (JsonProcessingException e) {
+            throw new DecodeException(e);
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.ruparts.context.task.model.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
 import com.ruparts.main.Defaults;
@@ -9,7 +10,7 @@ import java.text.SimpleDateFormat;
 
 public class TaskUpdateRequestNew {
 
-    @JsonProperty("id")
+    @JsonUnwrapped
     public TaskId id;
 
     @JsonProperty("title")

@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskObject;
-import com.ruparts.context.task.service.TaskRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,18 +95,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             view = inflater.inflate(R.layout.task_explist_item, null);
         }
 
-        TaskObject tbo = (TaskObject) getChild(parentPosition, childPosition);
+        TaskObject task = (TaskObject) getChild(parentPosition, childPosition);
 
-        ImageView tboPriority = view.findViewById(R.id.item_priority);
+        ImageView taskPriority = view.findViewById(R.id.item_priority);
         TextView tboName = view.findViewById(R.id.item_name);
         TextView tboComment = view.findViewById(R.id.item_comment);
         TextView tboDate = view.findViewById(R.id.item_date);
         TextView notification = view.findViewById(R.id.item_note);
 
-        tboName.setText(tbo.taskTitle);
+        tboName.setText(task.taskTitle);
 
-        if (tbo.taskFinishAt != null) {
-            Date finishDate = tbo.taskFinishAt;
+        if (task.taskFinishAt != null) {
+            Date finishDate = task.taskFinishAt;
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
             String formattedDate = simpleDateFormat.format(finishDate);
             tboDate.setText(formattedDate);
@@ -115,17 +114,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             tboDate.setText("");
         }
 
-        tboComment.setText(tbo.taskDescription);
+        tboComment.setText(task.taskDescription);
 
-        switch (tbo.taskPriority) {
+        switch (task.taskPriority) {
             case  ("high"):
-                tboPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
+                taskPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
                 break;
             case ("low"):
-                tboPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24);
+                taskPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24);
                 break;
             default:
-                tboPriority.setImageResource(R.drawable.equal_priority);
+                taskPriority.setImageResource(R.drawable.equal_priority);
                 break;
         }
 
@@ -135,23 +134,23 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         Calendar calendar2 = Calendar.getInstance();
         calendar2.add(Calendar.DATE, 1);
-        Date twoDaysElse = calendar2.getTime();
+        Date twoDaysLeft = calendar2.getTime();
 
         Calendar calendar3 = Calendar.getInstance();
         calendar3.add(Calendar.DATE, 2);
         Date normalDate = calendar3.getTime();
 
-        if (tbo.taskFinishAt == null) {
+        if (task.taskFinishAt == null) {
             notification.setText("");
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_white));
-        } else if (tbo.taskFinishAt != null && tbo.taskFinishAt.before(fatal)) {
+        } else if (task.taskFinishAt != null && task.taskFinishAt.before(fatal)) {
             notification.setText("просрочено");
             notification.setTextColor(c.getColor(R.color.white));
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_red));
-        } else if (tbo.taskFinishAt != null && tbo.taskFinishAt.after(fatal) && tbo.taskFinishAt.before(twoDaysElse)) {
+        } else if (task.taskFinishAt != null && task.taskFinishAt.after(fatal) && task.taskFinishAt.before(twoDaysLeft)) {
             notification.setText("остался 1 день");
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
-        } else if (tbo.taskFinishAt != null && tbo.taskFinishAt.after(twoDaysElse) && tbo.taskFinishAt.before(normalDate)) {
+        } else if (task.taskFinishAt != null && task.taskFinishAt.after(twoDaysLeft) && task.taskFinishAt.before(normalDate)) {
             notification.setText("осталось 2 дня");
             notification.setBackground(c.getDrawable(R.drawable.border_for_notification_task_item_yellow));
         } else {
@@ -190,29 +189,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 filtered.add(newExpListGroup);
             }
         }
-
-//        if (query.isEmpty()) {
-//            filtered.addAll(groups);
-//        } else {
-//            for (ExpListGroup elg: groups) {
-//                ArrayList<TaskObject> childList = elg.itemsList;
-//                ArrayList<TaskObject> newList = new ArrayList<>();
-//
-//                for (TaskObject task: childList) {
-//                    if (task.taskTitle.toLowerCase().contains(query)) {
-//                        newList.add(task);
-//                    }
-//                }
-//
-//                if (!newList.isEmpty()) {
-//                    String name = elg.elgTaskTypeToShow.substring(0,elg.elgTaskTypeToShow.length()-3);
-//                    ExpListGroup newExpListGroup = new ExpListGroup(name);
-//                    newExpListGroup.itemsList = newList;
-//                    newExpListGroup.elgTaskTypeToShow = name + " (" + newExpListGroup.itemsList.size() + ")";
-//                    filtered.add(newExpListGroup);
-//                }
-//            }
-//        }
         notifyDataSetChanged();
 
     }

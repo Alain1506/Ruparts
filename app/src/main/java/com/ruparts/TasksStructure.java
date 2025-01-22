@@ -31,13 +31,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textview.MaterialTextView;
+import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
 import com.ruparts.context.task.model.TaskStatusEnum;
+import com.ruparts.context.task.model.api.TaskListRequest;
+import com.ruparts.context.task.model.api.TaskStatusRequestNew;
+import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
+import com.ruparts.context.task.service.TaskApiClient;
 import com.ruparts.helperclasses.TaskStatusRequest;
 import com.ruparts.helperclasses.TaskUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.ruparts.main.Container;
 
 import org.json.JSONObject;
 
@@ -59,6 +66,7 @@ public class TasksStructure extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TaskObject task;
+    private String stringOfEnumStatus = null;
 
     private ImageView priority;
     private EditText description;
@@ -72,7 +80,7 @@ public class TasksStructure extends AppCompatActivity {
     private MaterialButton btnInWork;
     private MaterialButton btnCancelled;
     private LinearLayout threeButtonsLayout;
-    private TextView changeablePriority;
+    private MaterialTextView changeablePriority;
     private TextView finishDateHeader;
 
 
@@ -105,7 +113,7 @@ public class TasksStructure extends AppCompatActivity {
             btnSave = findViewById(R.id.button_save);
             btnSave.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_check_24, 0, 0, 0);
             btnInWork = findViewById(R.id.button_in_work);
-            btnInWork.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            btnInWork.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_play_arrow_24, 0, 0, 0);
             btnCancelled = findViewById(R.id.button_cancelled);
             btnCancelled.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_cancel_24, 0, 0, 0);
 
@@ -118,8 +126,11 @@ public class TasksStructure extends AppCompatActivity {
             if (arguments != null) {
 
                 task = (TaskObject) arguments.getSerializable(TaskObject.class.getSimpleName());
+                int number = arguments.getInt("id"); //добавлено
 
                 assert task != null;
+                task.id = new TaskId(number); //добавлено
+
                 description.setText(task.taskDescription);
 
                 if (task.taskFinishAt != null) {
@@ -149,8 +160,9 @@ public class TasksStructure extends AppCompatActivity {
                         + Objects.requireNonNull(libraryMaps.taskTypes.get(task.taskType)).substring(1);
                 taskType.setText(textForTaskTypeField);
 
-                String textForTaskStatusField = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
-                        + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
+                stringOfEnumStatus = String.valueOf(task.status).toLowerCase();
+                String textForTaskStatusField = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
+                        + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
                 taskStatus.setText(textForTaskStatusField);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy");
@@ -159,15 +171,15 @@ public class TasksStructure extends AppCompatActivity {
 
                 taskImplementer.setText(libraryMaps.implementer.get(task.taskImplementer));
 
-                if (task.status.equals("to_do")) {
+                if (task.status.equals(TaskStatusEnum.TO_DO)) {
                     btnInWork.setText("В работу");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_play_arrow_24));
-                } else if (task.status.equals("in_progress")) {
+                } else if (task.status.equals(TaskStatusEnum.IN_PROGRESS)) {
                     btnInWork.setText("Закрыть");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                 } else {
-                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
-                            + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
+                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
+                            + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
                     btnInWork.setText(textForButton);
                     btnInWork.setBackgroundColor(getResources().getColor(R.color.white));
                     btnInWork.setTextColor(getResources().getColor(R.color.gray));
@@ -240,21 +252,21 @@ public class TasksStructure extends AppCompatActivity {
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
-                    if (task.status.equals("to_do")) {
+                    if (task.status.equals(TaskStatusEnum.TO_DO)) {
                         task.status = TaskStatusEnum.IN_PROGRESS;
                         changeTaskStatus(task);
-                        taskStatus.setText(libraryMaps.status.get(task.status));
+                        taskStatus.setText(libraryMaps.status.get(stringOfEnumStatus));
                         btnInWork.setText("Закрыть");
                         btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                         saveChanges(task);
 
-                    } else if (task.status.equals("in_progress")) {
+                    } else if (task.status.equals(TaskStatusEnum.IN_PROGRESS)) {
                         task.status = TaskStatusEnum.COMPLETED;
                         changeTaskStatus(task);
-                        taskStatus.setText(libraryMaps.status.get(task.status));
+                        taskStatus.setText(libraryMaps.status.get(stringOfEnumStatus));
                         btnCancelled.setVisibility(View.INVISIBLE);
-                        String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
-                                + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
+                        String textForButton = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
+                                + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
                         btnInWork.setText(textForButton);
                         btnInWork.setTextColor(R.color.gray);
                         btnInWork.setBackgroundColor(R.color.white);
@@ -270,9 +282,9 @@ public class TasksStructure extends AppCompatActivity {
                 public void onClick(View view) {
                     task.status = TaskStatusEnum.COMPLETED;
                     changeTaskStatus(task);
-                    taskStatus.setText(libraryMaps.status.get(task.status));
-                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(0, 1).toUpperCase()
-                            + Objects.requireNonNull(libraryMaps.status.get(task.status)).substring(1);
+                    taskStatus.setText(libraryMaps.status.get(stringOfEnumStatus));
+                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
+                            + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
                     btnInWork.setText(textForButton);
                     btnInWork.setTextColor(R.color.gray);
                     btnInWork.setBackgroundColor(R.color.white);
@@ -333,73 +345,10 @@ public class TasksStructure extends AppCompatActivity {
         } else {
 
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                task.taskDescription = description.getText().toString();
-                TaskUpdateRequest tur = new TaskUpdateRequest(task);
-                tur.action = "app.task.update";
-                tur.id = "325ege324ll23el42uicc";
-
-                final String updateObjectAsString;
-                try {
-                    updateObjectAsString = objectMapper.writeValueAsString(tur);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                final JSONObject[] jsonObject = {null};
-
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Thread current = Thread.currentThread();
-                        try {
-                            OkHttpClient client = new OkHttpClient().newBuilder()
-                                    .build();
-                            MediaType mediaType = MediaType.parse("application/json");
-                            RequestBody body = RequestBody.create(updateObjectAsString, mediaType);
-                            Request request = new Request.Builder()
-                                    .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-                                    .method("POST", body)
-                                    .addHeader("Content-Type", "application/json")
-                                    .addHeader("Authorization", "Bearer " + token)
-                                    .build();
-                            Response response = client.newCall(request).execute();
-                            if (response.code() != 200) {
-                                Toast.makeText(TasksStructure.this, "Невозможно скорректировать задачу", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(TasksStructure.this, TasksStructure.class);
-                                startActivity(intent);
-                            }
-                            assert response.body() != null;
-                            String responseString = response.body().string();
-                            jsonObject[0] = new JSONObject(responseString);
-
-                            if (jsonObject[0].getInt("type") != 0) {
-                                current.interrupt();
-                            }
-
-                            String receivedTask = jsonObject[0].getJSONObject("data").toString();
-
-                            TaskObject savedTask = objectMapper.readValue(receivedTask, TaskObject.class);
-                            mapOfTasks.put(savedTask.id, savedTask);
-
-                            for (int i = 0; i < expListContents.size(); i++) {
-                                if (expListContents.get(i).elgTaskType.equals(savedTask.taskType)) {
-                                    expListContents.get(i).updateTask(savedTask);
-                                }
-                            }
-
-                            for (int i = 0; i < listOfTasks.size(); i++) {
-                                if (listOfTasks.get(i).id == savedTask.id) {
-                                    listOfTasks.set(i, savedTask);
-                                }
-                            }
-
-                        } catch (Exception e) {
-                            current.interrupt();
-                            e.getMessage();
-                        }
-                    }
-                });
-                thread.start();
+                task.taskDescription = String.valueOf(description.getText());
+                TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
+                TaskUpdateRequestNew taskUpdateRequest = new TaskUpdateRequestNew(task);
+                task = taskApiClient.update(taskUpdateRequest);
             } catch (Throwable e) {
                 e.getMessage();
             }
@@ -407,53 +356,9 @@ public class TasksStructure extends AppCompatActivity {
     }
 
     public void changeTaskStatus(TaskObject tbo) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        TaskStatusRequest tsr = new TaskStatusRequest(tbo);
-        tsr.action = "app.task.status";
-        tsr.id = "325ege324ll23el42uicc";
-
-        final String statusObjectAsString;
-        try {
-            statusObjectAsString = objectMapper.writeValueAsString(tsr);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        final JSONObject[] jsonObject = {null};
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client = new OkHttpClient().newBuilder()
-                            .build();
-                    MediaType mediaType = MediaType.parse("application/json");
-                    RequestBody body = RequestBody.create(statusObjectAsString, mediaType);
-                    Request request = new Request.Builder()
-                            .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-                            .method("POST", body)
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("Authorization", "Bearer " + token)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    if (response.code() != 200) {
-                        Toast.makeText(TasksStructure.this, "Невозможно отправить задачу в работу", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(TasksStructure.this, TasksStructure.class);
-                        startActivity(intent);
-                    }
-                    assert response.body() != null;
-                    String responseString = response.body().string();
-                    jsonObject[0] = new JSONObject(responseString);
-                    String receivedTask = jsonObject[0].getJSONObject("data").toString();
-
-                    TaskObject changedTask = objectMapper.readValue(receivedTask, TaskObject.class);
-                    mapOfTasks.put(changedTask.id, changedTask);
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        thread.start();
+        TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
+        TaskStatusRequestNew taskStatusRequest = new TaskStatusRequestNew();
+        task = taskApiClient.updateStatus(taskStatusRequest);
     }
 
     public void setDate(View v) {
