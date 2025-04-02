@@ -37,7 +37,7 @@ public class TasksAllFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.context = this.getActivity();
+        this.context = this.getContext();
         return inflater.inflate(R.layout.fragment_tasks_all, container, false);
     }
 
@@ -93,15 +93,10 @@ public class TasksAllFragment extends Fragment {
                 ExpListGroup elg = filtered.get(parentPosition);
                 TaskObject task = elg.itemsList.get(childPosition);
 
-                int number = task.id.id;
-
                 Intent intent = new Intent(context, TasksStructure.class);
-
                 Bundle extras = new Bundle();
                 extras.putSerializable(TaskObject.class.getSimpleName(), task);
-                extras.putInt("id", number);
                 intent.putExtras(extras);
-
                 startActivity(intent);
 
                 return false;
@@ -112,7 +107,7 @@ public class TasksAllFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_all);
+        listView = view.findViewById(R.id.tasks_exp_list_view_all);
         this.loadListView();
 
     }

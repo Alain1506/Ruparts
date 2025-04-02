@@ -1,7 +1,10 @@
 package com.ruparts;
 
 
+//import static com.ruparts.MainActivity.taskLibraryModel;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,14 +21,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.ruparts.context.library.LibraryModel;
+import com.ruparts.context.library.LibraryRepository;
+import com.ruparts.context.task.model.api.LibraryRequest;
+import com.ruparts.context.task.service.TaskApiClient;
+import com.ruparts.context.task.service.TaskRepository;
 import com.ruparts.helperclasses.AuthorizationMap;
-import com.ruparts.helperclasses.LibraryMaps;
-import com.ruparts.helperclasses.LibraryRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ruparts.main.ApiClient;
+import com.ruparts.main.Container;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -36,8 +42,7 @@ import okhttp3.Response;
 
 public class AuthorizationActivity extends AppCompatActivity {
 
-    private LibraryMaps libraryMaps = new LibraryMaps();
-    private String token = null;
+    public static String token = null;
 
     private String enteredSymbols;
 
@@ -72,7 +77,7 @@ public class AuthorizationActivity extends AppCompatActivity {
 
         AuthorizationMap map = new AuthorizationMap();
 
-        Button[] buttons0to9 = {button0,button1,button2,button3,button4,button5,button6,button7,button8,button9};
+        Button[] buttons0to9 = {button0, button1, button2, button3, button4, button5, button6, button7, button8, button9};
 
         for (int i = 0; i < buttons0to9.length; i++) {
             final int number = i;
@@ -137,7 +142,7 @@ public class AuthorizationActivity extends AppCompatActivity {
                                     JSONObject jsonObject = new JSONObject(responseString);
                                     token = jsonObject.getString("token");
                                     saveToken();
-                                    saveLibrary();
+                                    saveLibraryInApp();
 
                                     Intent intent = new Intent(AuthorizationActivity.this, MainActivity.class);
                                     startActivity(intent);
@@ -162,112 +167,54 @@ public class AuthorizationActivity extends AppCompatActivity {
 
     }
 
-    private void saveLibrary() {
+    private void saveLibraryInApp() {
+        SharedPreferences preferences = getSharedPreferences(LibraryRepository.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+        Container.getLibraryRepository().init(this.getApplicationContext());
 
-        final JSONObject[] jsonObject = {null};
-        libraryMaps = new LibraryMaps();
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    LibraryRequest libraryRequest = new LibraryRequest();
-                    libraryRequest.libraryRequestId = "325ege324ll23el42uicc";
-                    libraryRequest.libraryRequestAction = "app.task.library";
-                    libraryRequest.libraryRequestData = null;
-                    final String mapsRequest = objectMapper.writeValueAsString(libraryRequest);
-
-                    OkHttpClient client = new OkHttpClient().newBuilder()
-                            .build();
-                    MediaType mediaType = MediaType.parse("application/json");
-                    RequestBody body = RequestBody.create(mapsRequest, mediaType);
-                    Request request = new Request.Builder()
-                            .url("http://stage.ruparts.ru/api/endpoint?XDEBUG_TRIGGER=0")
-                            .method("POST", body)
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("Authorization", "Bearer " + token)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    if (response.code() != 200) {
-                        Toast.makeText(AuthorizationActivity.this, "Сервер не может загрузить библиотеку", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(AuthorizationActivity.this, AuthorizationActivity.class);
-                        startActivity(intent);
-                    }
-                    assert response.body() != null;
-                    String responseString = response.body().string();
-
-                    jsonObject[0] = new JSONObject(responseString);
-
-//                    libraryMaps.task_types = null;
-//                    libraryMaps.user_roles = null;
-//                    libraryMaps.user_roles_editable = null;
-//                    libraryMaps.implementer = null;
-//                    libraryMaps.status = null;
-//                    libraryMaps.id_reference_type = null;
-
-                    String task_types = jsonObject[0].getJSONObject("data").getJSONObject("task_types").toString();
-                    libraryMaps.taskTypes = objectMapper.readValue(task_types, HashMap.class);
-                    String user_roles = jsonObject[0].getJSONObject("data").getJSONObject("user_roles").toString();
-                    libraryMaps.userRoles = objectMapper.readValue(user_roles, HashMap.class);
-                    String user_roles_editable = jsonObject[0].getJSONObject("data").getJSONObject("user_roles_editable").toString();
-                    libraryMaps.userRolesEditable = objectMapper.readValue(user_roles_editable, HashMap.class);
-                    String implementer = jsonObject[0].getJSONObject("data").getJSONObject("implementer").toString();
-                    libraryMaps.implementer = objectMapper.readValue(implementer, HashMap.class);
-                    String status = jsonObject[0].getJSONObject("data").getJSONObject("status").toString();
-                    libraryMaps.status = objectMapper.readValue(status, HashMap.class);
-                    String id_reference_type = jsonObject[0].getJSONObject("data").getJSONObject("id_reference_type").toString();
-                    libraryMaps.idReferenceType = objectMapper.readValue(id_reference_type, HashMap.class);
-
-                    SharedPreferences libraryTaskTypes = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
-                    SharedPreferences.Editor libraryTaskTypesEditor = libraryTaskTypes.edit();
-                    for (String s : libraryMaps.taskTypes.keySet()) {
-                        libraryTaskTypesEditor.putString(s, libraryMaps.taskTypes.get(s));
-                    }
-                    libraryTaskTypesEditor.commit();
-
-                    SharedPreferences libraryUserRoles = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
-                    SharedPreferences.Editor libraryUserRolesEditor = libraryUserRoles.edit();
-                    for (String s : libraryMaps.userRoles.keySet()) {
-                        libraryUserRolesEditor.putString(s, libraryMaps.userRoles.get(s));
-                    }
-                    libraryUserRolesEditor.commit();
-
-                    SharedPreferences libraryUserRolesEditable = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
-                    SharedPreferences.Editor libraryUserRolesEditableEditor = libraryUserRolesEditable.edit();
-                    for (String s : libraryMaps.userRolesEditable.keySet()) {
-                        libraryUserRolesEditableEditor.putString(s, libraryMaps.userRolesEditable.get(s));
-                    }
-                    libraryUserRolesEditableEditor.commit();
-
-                    SharedPreferences libraryImplementer = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
-                    SharedPreferences.Editor libraryImplementerEditor = libraryImplementer.edit();
-                    for (String s : libraryMaps.implementer.keySet()) {
-                        libraryImplementerEditor.putString(s, libraryMaps.implementer.get(s));
-                    }
-                    libraryImplementerEditor.commit();
-
-                    SharedPreferences libraryStatus = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
-                    SharedPreferences.Editor libraryStatusEditor = libraryStatus.edit();
-                    for (String s : libraryMaps.status.keySet()) {
-                        libraryStatusEditor.putString(s, libraryMaps.status.get(s));
-                    }
-                    libraryStatusEditor.commit();
-
-                    SharedPreferences libraryIdReferenceType = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
-                    SharedPreferences.Editor libraryIdReferenceTypeEditor = libraryIdReferenceType.edit();
-                    for (String s : libraryMaps.idReferenceType.keySet()) {
-                        libraryIdReferenceTypeEditor.putString(s, libraryMaps.idReferenceType.get(s));
-                    }
-                    libraryIdReferenceTypeEditor.commit();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-
+//        SharedPreferences libraryTaskTypes = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
+//        SharedPreferences.Editor libraryTaskTypesEditor = libraryTaskTypes.edit();
+//        for (String s : libraryModel.taskLibraryModel.taskTypes.keySet()) {
+//            libraryTaskTypesEditor.putString(s, libraryModel.taskLibraryModel.taskTypes.get(s));
+//        }
+//        libraryTaskTypesEditor.commit();
+//
+//        SharedPreferences libraryUserRoles = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
+//        SharedPreferences.Editor libraryUserRolesEditor = libraryUserRoles.edit();
+//        for (String s : libraryModel.taskLibraryModel.userRoles.keySet()) {
+//            libraryUserRolesEditor.putString(s, libraryModel.taskLibraryModel.userRoles.get(s));
+//        }
+//        libraryUserRolesEditor.commit();
+//
+//        SharedPreferences libraryUserRolesEditable = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
+//        SharedPreferences.Editor libraryUserRolesEditableEditor = libraryUserRolesEditable.edit();
+//        for (String s : libraryModel.taskLibraryModel.userRolesEditable.keySet()) {
+//            libraryUserRolesEditableEditor.putString(s, libraryModel.taskLibraryModel.userRolesEditable.get(s));
+//        }
+//        libraryUserRolesEditableEditor.commit();
+//
+//        SharedPreferences libraryImplementer = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
+//        SharedPreferences.Editor libraryImplementerEditor = libraryImplementer.edit();
+//        for (String s : libraryModel.taskLibraryModel.implementer.keySet()) {
+//            libraryImplementerEditor.putString(s, libraryModel.taskLibraryModel.implementer.get(s));
+//        }
+//        libraryImplementerEditor.commit();
+//
+//        SharedPreferences libraryStatus = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
+//        SharedPreferences.Editor libraryStatusEditor = libraryStatus.edit();
+//        for (String s : libraryModel.taskLibraryModel.status.keySet()) {
+//            libraryStatusEditor.putString(s, libraryModel.taskLibraryModel.status.get(s));
+//        }
+//        libraryStatusEditor.commit();
+//
+//        SharedPreferences libraryIdReferenceType = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
+//        SharedPreferences.Editor libraryIdReferenceTypeEditor = libraryIdReferenceType.edit();
+//        for (String s : libraryModel.taskLibraryModel.idReferenceType.keySet()) {
+//            libraryIdReferenceTypeEditor.putString(s, libraryModel.taskLibraryModel.idReferenceType.get(s));
+//        }
+//        libraryIdReferenceTypeEditor.commit();
     }
 
     public void saveToken() {

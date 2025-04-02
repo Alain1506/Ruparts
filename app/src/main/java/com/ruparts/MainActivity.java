@@ -1,8 +1,10 @@
 package com.ruparts;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -22,9 +25,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.ruparts.helperclasses.LibraryMaps;
+import com.ruparts.context.library.LibraryRepository;
+import com.ruparts.context.library.TaskLibraryModel;
 import com.google.android.material.navigation.NavigationView;
 
+import com.ruparts.context.task.model.api.LibraryRequest;
+import com.ruparts.main.Container;
 import com.ruparts.main.CrashHandler;
 
 import java.util.HashMap;
@@ -32,20 +38,21 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static String token = null;
-    public static LibraryMaps libraryMaps = new LibraryMaps();
+//    public static TaskLibraryModel taskLibraryModel = new TaskLibraryModel();
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
     private SharedPreferences sharedToken;
-    private SharedPreferences sharedLibraryTaskTypes;
-    private SharedPreferences sharedLibraryUserRoles;
-    private SharedPreferences sharedLibraryUserRolesEditable;
-    private SharedPreferences sharedLibraryImplementer;
-    private SharedPreferences sharedLibraryStatus;
-    private SharedPreferences sharedLibraryIdReferenceType;
+//    private SharedPreferences sharedLibraryTaskTypes;
+//    private SharedPreferences sharedLibraryUserRoles;
+//    private SharedPreferences sharedLibraryUserRolesEditable;
+//    private SharedPreferences sharedLibraryImplementer;
+//    private SharedPreferences sharedLibraryStatus;
+//    private SharedPreferences sharedLibraryIdReferenceType;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,12 +73,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         sharedToken = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         token = sharedToken.getString("token", "");
-        createLibraryMaps();
+
+
+
+
 
         if (token == null || token.isEmpty()) {
             Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
             startActivity(intent);
         }
+
+        Container.getLibraryRepository().init(this.getApplicationContext());
 
         toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
@@ -110,33 +122,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 try {
-                    SharedPreferences.Editor editor = sharedToken.edit();
-                    editor.clear();
-                    editor.apply();
+                    sharedToken.edit().clear().apply();
 
-                    SharedPreferences.Editor editor1 = sharedLibraryTaskTypes.edit();
-                    editor1.clear();
-                    editor1.apply();
-
-                    SharedPreferences.Editor editor2 = sharedLibraryUserRoles.edit();
-                    editor2.clear();
-                    editor2.apply();
-
-                    SharedPreferences.Editor editor3 = sharedLibraryUserRolesEditable.edit();
-                    editor3.clear();
-                    editor3.apply();
-
-                    SharedPreferences.Editor editor4 = sharedLibraryImplementer.edit();
-                    editor4.clear();
-                    editor4.apply();
-
-                    SharedPreferences.Editor editor5 = sharedLibraryStatus.edit();
-                    editor5.clear();
-                    editor5.apply();
-
-                    SharedPreferences.Editor editor6 = sharedLibraryIdReferenceType.edit();
-                    editor6.clear();
-                    editor6.apply();
+                    SharedPreferences preferences = getSharedPreferences(LibraryRepository.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                    preferences.edit().clear().apply();
                 } catch (Exception e) {
                     e.getMessage();
                 }
@@ -156,18 +145,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.show();
     }
 
-    public void createLibraryMaps() {
-        sharedLibraryTaskTypes = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
-        libraryMaps.taskTypes = (HashMap<String, String>) sharedLibraryTaskTypes.getAll();
-        sharedLibraryUserRoles = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
-        libraryMaps.userRoles = (HashMap<String, String>) sharedLibraryUserRoles.getAll();
-        sharedLibraryUserRolesEditable = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
-        libraryMaps.userRolesEditable = (HashMap<String, String>) sharedLibraryUserRolesEditable.getAll();
-        sharedLibraryImplementer = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
-        libraryMaps.implementer = (HashMap<String, String>) sharedLibraryImplementer.getAll();
-        sharedLibraryStatus = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
-        libraryMaps.status = (HashMap<String, String>) sharedLibraryStatus.getAll();
-        sharedLibraryIdReferenceType = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
-        libraryMaps.idReferenceType = (HashMap<String, String>) sharedLibraryIdReferenceType.getAll();
-    }
+//    public void createLibraryMaps() {
+//        sharedLibraryTaskTypes = getSharedPreferences("SharedlibraryTaskTypes", MODE_PRIVATE);
+//        taskLibraryModel.taskTypes = (HashMap<String, String>) sharedLibraryTaskTypes.getAll();
+//        sharedLibraryUserRoles = getSharedPreferences("SharedlibraryUserRoles", MODE_PRIVATE);
+//        taskLibraryModel.userRoles = (HashMap<String, String>) sharedLibraryUserRoles.getAll();
+//        sharedLibraryUserRolesEditable = getSharedPreferences("SharedlibraryUserRolesEditable", MODE_PRIVATE);
+//        taskLibraryModel.userRolesEditable = (HashMap<String, String>) sharedLibraryUserRolesEditable.getAll();
+//        sharedLibraryImplementer = getSharedPreferences("SharedlibraryImplementer", MODE_PRIVATE);
+//        taskLibraryModel.implementer = (HashMap<String, String>) sharedLibraryImplementer.getAll();
+//        sharedLibraryStatus = getSharedPreferences("SharedlibraryStatus", MODE_PRIVATE);
+//        taskLibraryModel.status = (HashMap<String, String>) sharedLibraryStatus.getAll();
+//        sharedLibraryIdReferenceType = getSharedPreferences("SharedlibraryIdReferenceType", MODE_PRIVATE);
+//        taskLibraryModel.idReferenceType = (HashMap<String, String>) sharedLibraryIdReferenceType.getAll();
+//    }
 }

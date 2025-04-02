@@ -4,7 +4,8 @@ import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
 import com.ruparts.context.task.model.api.TaskListRequest;
-import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
+import com.ruparts.context.task.model.api.TaskStatusRequest;
+import com.ruparts.context.task.model.api.TaskUpdateRequest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +23,10 @@ public class TaskRepository {
     public TaskObject getById(TaskId taskId) {
         // вызов АПИ получения одной задачи (task)
         if (this.taskObjectsCache.containsKey(taskId)) {
-            //return this.taskObjectsCache.get(taskId);
+            return this.taskObjectsCache.get(taskId);
         }
         TaskObject task = this.apiClient.read(taskId);
-        //this.taskObjectsCache.put(task.id, task);
+        this.taskObjectsCache.put(task.id, task);
 
         return task;
     }
@@ -33,8 +34,8 @@ public class TaskRepository {
     public List<TaskObject> getByFilter(TaskFilter taskFilter) {
         // вызов АПИ получения списка (list)
         TaskListRequest taskListRequest = new TaskListRequest();
-        taskListRequest.title = taskFilter.search;
-        taskListRequest.status = taskFilter.status;
+        taskListRequest.filter.search = taskFilter.search;
+        taskListRequest.filter.status = taskFilter.status;
         List<TaskObject> tasks = this.apiClient.list(taskListRequest);
 
         for (TaskObject task: tasks) {
@@ -46,11 +47,24 @@ public class TaskRepository {
 
     public TaskObject saveTask(TaskObject task) {
         // вызов АПИ сохранения
-        task = this.apiClient.update(new TaskUpdateRequestNew(task));
+        task = this.apiClient.update(new TaskUpdateRequest(task));
         this.taskObjectsCache.put(task.id, task);
 
         return task;
     }
+
+    public TaskObject changeTaskStatus(TaskObject task) {
+        // вызов АПИ смены статуса
+        task = this.apiClient.updateStatus(new TaskStatusRequest(task));
+        this.taskObjectsCache.put(task.id, task);
+
+        return task;
+    }
+
+//    public TaskLibraryModel getLibrary() {
+//        taskLibraryModel = this.apiClient.getLibrary(new LibraryRequest());
+//        return taskLibraryModel;
+//    }
 
     public void reset() {
         // очистить кеш

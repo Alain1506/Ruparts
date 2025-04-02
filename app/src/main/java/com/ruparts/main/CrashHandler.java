@@ -8,6 +8,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.ruparts.AuthorizationActivity;
+import com.ruparts.main.exception.api.ApiCallException;
+import com.ruparts.main.exception.api.NotAuthorizedException;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -26,11 +30,24 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler{
 
     @Override
     public void uncaughtException(@NonNull Thread thread, @NonNull Throwable exception) {
+        if (exception.getCause() instanceof NotAuthorizedException) {
+            Intent intent = new Intent(context, AuthorizationActivity.class);
+            context.startActivity(intent);
+            Looper.loop();
+            return;
+        }
+        if (exception instanceof ApiCallException) {
+            errorMessage.append("API call exception!" + newLine);
+            errorMessage.append("Message: " + exception.getMessage() + newLine);
+            errorMessage.append("Details: " + ((ApiCallException) exception).details + newLine);
+            errorMessage.append(newLine);
+        }
 
         StringWriter stackTrace = new StringWriter();
         exception.printStackTrace( new PrintWriter(stackTrace));
-
+        errorMessage.append("Stacktrace: ");
         errorMessage.append(stackTrace);
+        errorMessage.append(newLine);
 
         softwareInfo.append("SDK: ");
         softwareInfo.append(Build.VERSION.SDK_INT);
@@ -55,13 +72,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler{
         intent.putExtra("Date" , dateInfo.toString());
 
         context.startActivity(intent);
-        try {
-            Looper.getMainLooper().wait();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        Looper.loop();
 
         android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(1);
+        System.exit(0);
     }
 }

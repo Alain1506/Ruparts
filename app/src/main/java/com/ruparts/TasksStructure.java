@@ -1,14 +1,7 @@
 package com.ruparts;
 
-import static com.ruparts.MainActivity.libraryMaps;
-import static com.ruparts.MainActivity.token;
-import static com.ruparts.TasksActivity.expListContents;
-import static com.ruparts.TasksActivity.listOfTasks;
-import static com.ruparts.TasksActivity.mapOfTasks;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,48 +25,37 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textview.MaterialTextView;
-import com.ruparts.context.task.model.TaskId;
+import com.ruparts.context.library.LibraryModel;
+import com.ruparts.context.library.LibraryRepository;
+import com.ruparts.context.library.TaskLibraryModel;
 import com.ruparts.context.task.model.TaskObject;
 import com.ruparts.context.task.model.TaskStatusEnum;
-import com.ruparts.context.task.model.api.TaskListRequest;
-import com.ruparts.context.task.model.api.TaskStatusRequestNew;
-import com.ruparts.context.task.model.api.TaskUpdateRequestNew;
-import com.ruparts.context.task.service.TaskApiClient;
-import com.ruparts.helperclasses.TaskStatusRequest;
-import com.ruparts.helperclasses.TaskUpdateRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.ruparts.context.task.service.TaskRepository;
 import com.ruparts.main.Container;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class TasksStructure extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TaskObject task;
-    private String stringOfEnumStatus = null;
 
     private ImageView priority;
     private EditText description;
     private EditText date;
-    private TextView taskType;
+    private TextView taskTitle;
     private TextView taskStatus;
     private TextView taskCreatedDate;
+    private TextView taskChangeddDate;
     private TextView taskImplementer;
     private Calendar changeableDate = Calendar.getInstance();
     private MaterialButton btnSave;
@@ -82,6 +64,11 @@ public class TasksStructure extends AppCompatActivity {
     private LinearLayout threeButtonsLayout;
     private MaterialTextView changeablePriority;
     private TextView finishDateHeader;
+
+    private LibraryRepository libraryRepository;
+    private TaskLibraryModel taskLibraryModel;
+    private TaskRepository taskRepository;
+
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -97,6 +84,12 @@ public class TasksStructure extends AppCompatActivity {
                 return insets;
             });
 
+            libraryRepository = Container.getLibraryRepository();
+            libraryRepository.init(this.getApplicationContext());
+            taskLibraryModel = libraryRepository.getLibrary().taskLibraryModel;
+
+            taskRepository = Container.getTaskRepository();
+
             toolbar = findViewById(R.id.my_toolbar);
             setSupportActionBar(toolbar);
             Objects.requireNonNull(getSupportActionBar()).setTitle("Задача");
@@ -104,9 +97,10 @@ public class TasksStructure extends AppCompatActivity {
             description = findViewById(R.id.description_view);
             date = findViewById(R.id.finishAt_date_view);
             priority = findViewById(R.id.priority_imageview);
-            taskType = findViewById(R.id.type_view);
-            taskStatus = findViewById(R.id.status_view);
+            taskTitle = findViewById(R.id.title_view);
+//            taskStatus = findViewById(R.id.status_view);
             taskCreatedDate = findViewById(R.id.date_view);
+            taskChangeddDate = findViewById(R.id.date_view2);
             taskImplementer = findViewById(R.id.implementer_view);
             threeButtonsLayout = findViewById(R.id.three_buttons_layout);
 
@@ -118,25 +112,21 @@ public class TasksStructure extends AppCompatActivity {
             btnCancelled.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_cancel_24, 0, 0, 0);
 
             changeablePriority = findViewById(R.id.priority_material_button);
-            finishDateHeader = findViewById(R.id.deadline_date_header);
-
+//            finishDateHeader = findViewById(R.id.finishAt_date_header);
 
             Bundle arguments = getIntent().getExtras();
 
             if (arguments != null) {
 
                 task = (TaskObject) arguments.getSerializable(TaskObject.class.getSimpleName());
-                int number = arguments.getInt("id"); //добавлено
 
                 assert task != null;
-                task.id = new TaskId(number); //добавлено
-
                 description.setText(task.taskDescription);
 
                 if (task.taskFinishAt != null) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
                     String formattedDate = simpleDateFormat.format(task.taskFinishAt);
-                    date.setText(formattedDate);
+                    date.setText(formattedDate + " г.");
                 }
 
                 switch (task.taskPriority) {
@@ -156,20 +146,30 @@ public class TasksStructure extends AppCompatActivity {
                         break;
                 }
 
-                String textForTaskTypeField = Objects.requireNonNull(libraryMaps.taskTypes.get(task.taskType)).substring(0, 1).toUpperCase()
-                        + Objects.requireNonNull(libraryMaps.taskTypes.get(task.taskType)).substring(1);
-                taskType.setText(textForTaskTypeField);
+//                String textForTaskTypeField = Objects.requireNonNull(taskLibraryModel.taskTypes.get(task.taskType)).substring(0, 1).toUpperCase()
+//                        + Objects.requireNonNull(taskLibraryModel.taskTypes.get(task.taskType)).substring(1);
+//                taskType.setText(textForTaskTypeField);
+                taskTitle.setText(task.taskTitle);
 
-                stringOfEnumStatus = String.valueOf(task.status).toLowerCase();
-                String textForTaskStatusField = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
-                        + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
-                taskStatus.setText(textForTaskStatusField);
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy");
+
+                String textForTaskStatusField = Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(0, 1).toUpperCase()
+                        + Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(1);
+//                taskStatus.setText(textForTaskStatusField);
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
                 String formattedCreatedDate = dateFormat.format(task.taskCreatedAt);
-                taskCreatedDate.setText(formattedCreatedDate);
+                taskCreatedDate.setText(formattedCreatedDate + " г.");
 
-                taskImplementer.setText(libraryMaps.implementer.get(task.taskImplementer));
+                String formattedChangedDate = dateFormat.format(task.taskUpdatedAt);
+                taskChangeddDate.setText(formattedChangedDate + " г.");
+
+
+//                taskImplementer.setText(taskLibraryModel.implementer.get(task.taskImplementer));
+
+                String textForTaskImplementerField = Objects.requireNonNull(taskLibraryModel.implementer.get(task.taskImplementer)).substring(0, 1).toUpperCase()
+                        + Objects.requireNonNull(taskLibraryModel.implementer.get(task.taskImplementer)).substring(1);
+                taskImplementer.setText(textForTaskImplementerField);
 
                 if (task.status.equals(TaskStatusEnum.TO_DO)) {
                     btnInWork.setText("В работу");
@@ -178,17 +178,20 @@ public class TasksStructure extends AppCompatActivity {
                     btnInWork.setText("Закрыть");
                     btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
                 } else {
-                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
-                            + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
+                    String textForButton = Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(0, 1).toUpperCase()
+                            + Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(1);
                     btnInWork.setText(textForButton);
-                    btnInWork.setBackgroundColor(getResources().getColor(R.color.white));
-                    btnInWork.setTextColor(getResources().getColor(R.color.gray));
+                    btnInWork.setBackgroundColor(this.getColor(R.color.white));
+                    btnInWork.setTextColor(this.getColor(R.color.gray));
                     btnInWork.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     btnCancelled.setVisibility(View.INVISIBLE);
                 }
             }
 
-            getSupportActionBar().setSubtitle(task.taskTitle);
+            String textForTaskTypeField = Objects.requireNonNull(taskLibraryModel.taskTypes.get(task.taskType)).substring(0, 1).toUpperCase()
+                    + Objects.requireNonNull(taskLibraryModel.taskTypes.get(task.taskType)).substring(1);
+//            getSupportActionBar().setSubtitle(task.taskTitle);
+            getSupportActionBar().setSubtitle(textForTaskTypeField);
 //            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -255,18 +258,19 @@ public class TasksStructure extends AppCompatActivity {
                     if (task.status.equals(TaskStatusEnum.TO_DO)) {
                         task.status = TaskStatusEnum.IN_PROGRESS;
                         changeTaskStatus(task);
-                        taskStatus.setText(libraryMaps.status.get(stringOfEnumStatus));
+                        taskStatus.setText(taskLibraryModel.status.get(task.status.getStatusFromLibrary()));
                         btnInWork.setText("Закрыть");
                         btnInWork.setIcon(getDrawable(R.drawable.baseline_close_24));
+
                         saveChanges(task);
 
                     } else if (task.status.equals(TaskStatusEnum.IN_PROGRESS)) {
                         task.status = TaskStatusEnum.COMPLETED;
                         changeTaskStatus(task);
-                        taskStatus.setText(libraryMaps.status.get(stringOfEnumStatus));
+                        taskStatus.setText(taskLibraryModel.status.get(task.status.getStatusFromLibrary()));
                         btnCancelled.setVisibility(View.INVISIBLE);
-                        String textForButton = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
-                                + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
+                        String textForButton = Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(0, 1).toUpperCase()
+                                + Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(1);
                         btnInWork.setText(textForButton);
                         btnInWork.setTextColor(R.color.gray);
                         btnInWork.setBackgroundColor(R.color.white);
@@ -282,9 +286,9 @@ public class TasksStructure extends AppCompatActivity {
                 public void onClick(View view) {
                     task.status = TaskStatusEnum.COMPLETED;
                     changeTaskStatus(task);
-                    taskStatus.setText(libraryMaps.status.get(stringOfEnumStatus));
-                    String textForButton = Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(0, 1).toUpperCase()
-                            + Objects.requireNonNull(libraryMaps.status.get(stringOfEnumStatus)).substring(1);
+                    taskStatus.setText(taskLibraryModel.status.get(task.status.getStatusFromLibrary()));
+                    String textForButton = Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(0, 1).toUpperCase()
+                            + Objects.requireNonNull(taskLibraryModel.status.get(task.status.getStatusFromLibrary())).substring(1);
                     btnInWork.setText(textForButton);
                     btnInWork.setTextColor(R.color.gray);
                     btnInWork.setBackgroundColor(R.color.white);
@@ -307,9 +311,13 @@ public class TasksStructure extends AppCompatActivity {
 
         ArrayList<String> list = new ArrayList<>();
 
-        for (Map.Entry<String, String> entry : libraryMaps.implementer.entrySet()) {
+        for (Map.Entry<String, String> entry : taskLibraryModel.implementer.entrySet()) {
             if (!entry.getKey().contains(":") && !list.contains(entry.getValue())) {
-                list.add(entry.getValue());
+
+                String textForTaskImplementerField = Objects.requireNonNull(entry.getValue()).substring(0, 1).toUpperCase()
+                        + Objects.requireNonNull(entry.getValue()).substring(1);
+
+                list.add(textForTaskImplementerField);
             }
         }
 
@@ -324,9 +332,11 @@ public class TasksStructure extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                taskImplementer.setText(list.get(position));
+                String textForTaskImplementerField = Objects.requireNonNull(taskLibraryModel.implementer.get(task.taskImplementer)).substring(0, 1).toUpperCase()
+                        + Objects.requireNonNull(taskLibraryModel.implementer.get(task.taskImplementer)).substring(1);
+                taskImplementer.setText(textForTaskImplementerField);
 
-                for (Map.Entry<String, String> entry : libraryMaps.implementer.entrySet()) {
+                for (Map.Entry<String, String> entry : taskLibraryModel.implementer.entrySet()) {
                     if (entry.getValue().equals(list.get(position))) {
                         task.taskImplementer = entry.getKey();
                     }
@@ -340,25 +350,34 @@ public class TasksStructure extends AppCompatActivity {
     public void saveChanges(TaskObject task) {
 
         if (task.taskFinishAt == null) {
-            finishDateHeader.setText("Введите дату");
-            finishDateHeader.setTextColor(getResources().getColor(R.color.red));
+            date.setText("Введите дату");
+            date.setTextColor(this.getColor(R.color.red));
+            Toast.makeText(this,"Изменения не сохранены", Toast.LENGTH_LONG).show();
         } else {
 
             try {
                 task.taskDescription = String.valueOf(description.getText());
-                TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
-                TaskUpdateRequestNew taskUpdateRequest = new TaskUpdateRequestNew(task);
-                task = taskApiClient.update(taskUpdateRequest);
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+                String formattedChangedDate = dateFormat.format(new Date());
+                taskChangeddDate.setText(formattedChangedDate + " г.");
+
+                SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");
+                try {
+                    task.taskUpdatedAt = format.parse(formattedChangedDate);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+                task = taskRepository.saveTask(task);
             } catch (Throwable e) {
                 e.getMessage();
             }
         }
     }
 
-    public void changeTaskStatus(TaskObject tbo) {
-        TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
-        TaskStatusRequestNew taskStatusRequest = new TaskStatusRequestNew();
-        task = taskApiClient.updateStatus(taskStatusRequest);
+    public void changeTaskStatus(TaskObject task) {
+        task = taskRepository.changeTaskStatus(task);
     }
 
     public void setDate(View v) {
@@ -377,14 +396,10 @@ public class TasksStructure extends AppCompatActivity {
             changeableDate.set(Calendar.MONTH, monthOfYear);
             changeableDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -1);
-            Date yesterday = calendar.getTime();
-
             Date finishDate = changeableDate.getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yy");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
             String formattedDate = simpleDateFormat.format(finishDate);
-            date.setText(formattedDate);
+            date.setText(formattedDate + " г.");
             task.taskFinishAt = finishDate;
         }
     };

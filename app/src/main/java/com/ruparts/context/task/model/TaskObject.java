@@ -3,6 +3,7 @@ package com.ruparts.context.task.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.ruparts.main.Defaults;
@@ -21,10 +22,7 @@ public class TaskObject implements Serializable {
 
 
     @JsonUnwrapped
-    public transient TaskId id;
-
-//    @JsonProperty("id")
-//    public int taskId;
+    public TaskId id;
 
     @JsonProperty("author")
     public TaskBodyDataAuthor taskBodyDataAuthor;
@@ -40,9 +38,6 @@ public class TaskObject implements Serializable {
 
     @JsonProperty("status")
     public TaskStatusEnum status;
-
-//    @JsonProperty("status")
-//    public String taskStatus;
 
     @JsonProperty("priority")
     public String taskPriority;

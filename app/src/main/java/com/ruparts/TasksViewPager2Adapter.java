@@ -63,7 +63,12 @@ public class TasksViewPager2Adapter extends FragmentStateAdapter {
         filtered.clear();
 
         TaskFilter taskFilter = new TaskFilter();
-        taskFilter.status = status;
+        TaskStatusEnum[] array = null;
+        if (status != null) {
+            array = new TaskStatusEnum[1];
+            array[0] = status;
+            taskFilter.status = array;
+        }
         List<TaskObject> list = taskRepository.getByFilter(taskFilter);
 
         if (list.size() != 0) {

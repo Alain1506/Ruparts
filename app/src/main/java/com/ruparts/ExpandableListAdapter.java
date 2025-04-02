@@ -117,7 +117,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         tboComment.setText(task.taskDescription);
 
         switch (task.taskPriority) {
-            case  ("high"):
+            case ("high"):
                 taskPriority.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
                 break;
             case ("low"):

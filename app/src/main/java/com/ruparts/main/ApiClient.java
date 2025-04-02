@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruparts.AuthorizationActivity;
 import com.ruparts.TasksActivity;
@@ -40,8 +42,6 @@ public class ApiClient {
     private ObjectMapper objectMapper;
     private OkHttpClient client;
 
-    private Context context;
-
     public ApiClient () {
         this.objectMapper = new ObjectMapper();
         this.client = new OkHttpClient().newBuilder().build();
@@ -53,6 +53,7 @@ public class ApiClient {
 
     public JSONObject callEndpointAndReturnJsonObject(String action, Object dataObject) {
         ApiRequestDto requestDto = new ApiRequestDto(action, dataObject);
+        Log.d("API" ,"Action call: " + action);
 
         final String requestBodyAsString;
         try {
@@ -77,7 +78,9 @@ public class ApiClient {
                 if (response.code() == 401) {
                     throw new NotAuthorizedException();
                 } else if (response.code() != 200) {
-                    throw new ApiCallException("Status code is not 200");
+                    String responseContent = response.body().string();
+                    responseContent = responseContent.substring(0, responseContent.indexOf("</title>") + 7);
+                    throw new ApiCallException("Status code is not 200", "Response content: " + responseContent);
                 }
                 assert response.body() != null;
 

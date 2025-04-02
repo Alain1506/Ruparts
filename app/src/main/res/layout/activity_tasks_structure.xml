@@ -18,373 +18,442 @@
             layout="@layout/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
 
+
     <LinearLayout
-        android:id="@+id/type_layout"
+        android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
         android:layout_below="@id/task_str_toolbar_layout"
-        >
-
-        <TextView
-            android:id="@+id/type_header"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="Тип"
-            android:textColor="@color/gray"
-            android:layout_gravity="center_vertical"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/type_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Сборка заказа"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/task_str_parameters_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
-        android:layout_below="@id/type_layout"
-        android:weightSum="3">
-
-
-        <LinearLayout
-            android:id="@+id/status_layout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            >
-
-            <TextView
-                android:id="@+id/status_header"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/gray"
-                android:text="Статус"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/status_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Открыта"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/date_layout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="vertical"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/date_header"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/gray"
-                android:text="Создана"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/date_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10 авг 2024"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/priority_layout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="vertical"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/priority_header"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/gray"
-                android:text="Приоритет"
-                android:textSize="20sp"/>
-
-            <LinearLayout
-                android:id="@+id/priority_view_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/priority_imageview"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/priority_material_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
-                    android:backgroundTint="@color/white"
-                    android:entries="@array/priorities" />
-
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/data_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/task_str_parameters_layout">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:paddingHorizontal="12dp"
-        >
-
-        <LinearLayout
-            android:id="@+id/implementer_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="2"
-            >
+        android:layout_marginTop="6dp">
 
         <TextView
-            android:id="@+id/implementer_header"
+            android:id="@+id/title_view"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Имя задачи"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_layout"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/description_image"
+            android:layout_width="40dp"
             android:layout_height="40dp"
-            android:textSize="15sp"
-            android:gravity="bottom"
-            android:text="Исполнитель" />
+            app:srcCompat="@drawable/subject_24dp_7f67be_fill0_wght400_grad0_opsz24"
+            android:padding="6dp"
+            android:layout_marginTop="3dp"
+            ></ImageView>
+
+        <EditText
+            android:id="@+id/description_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:backgroundTint="@android:color/transparent"
+            android:editable="true"
+            android:ellipsize="end"
+            android:ems="10"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:textSize="18sp"
+            android:hint="Введите комментарий" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/implementer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_details"
+        android:layout_weight="2"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp"
+        android:layout_marginTop="6dp">
+
+        <ImageView
+            android:id="@+id/implementer_image"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="2dp"
+            app:srcCompat="@drawable/baseline_person_outline_24"
+            android:paddingHorizontal="0dp"
+            android:layout_gravity="center_vertical"
+            ></ImageView>
 
         <TextView
             android:id="@+id/implementer_view"
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/border_layout_search"
             android:ems="10"
             android:inputType="text"
-            android:background="@drawable/border_layout_search"
-            android:drawableEnd="@drawable/baseline_arrow_drop_down_24"/>
-        </LinearLayout>
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:hint="Назначьте исполнителя"
+            />
+    </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/deadline_date_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp">
 
-        <TextView
-            android:id="@+id/deadline_date_header"
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/finishAt_date_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/implementer_layout"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp"
+        android:layout_marginTop="6dp">
+
+        <ImageView
+            android:id="@+id/finishAt_image"
+            android:layout_width="40dp"
             android:layout_height="40dp"
-            android:textSize="15sp"
-            android:textColor="@color/black"
-            android:gravity="bottom"
-            android:text="Выполнить до" />
+            app:srcCompat="@drawable/baseline_access_time_24"
+            android:paddingHorizontal="6dp"
+            android:layout_gravity="center_vertical"
+            ></ImageView>
 
-            <EditText
-                android:id="@+id/finishAt_date_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="14sp"
-                android:background="@drawable/border_layout_search"
-                android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
-                android:onClick="setDate"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:inputType="date" />
+        <EditText
+            android:id="@+id/finishAt_date_view"
+            android:layout_width="146dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/border_layout_search"
+            android:cursorVisible="false"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:inputType="date"
+            android:onClick="setDate"
+            android:textSize="16sp"
+            android:hint="Установите дату" />
+    </LinearLayout>
 
-        </LinearLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/priority_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/finishAt_date_layout"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp"
+        android:layout_marginTop="6dp">
+
+        <ImageView
+            android:id="@+id/priority_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@drawable/swap_vert_24dp_7f67be_fill0_wght400_grad0_opsz24"
+            android:paddingHorizontal="6dp"
+            android:layout_gravity="center_vertical"
+            ></ImageView>
 
         <LinearLayout
-            android:id="@+id/layout_details"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="12dp">
+            android:layout_marginLeft="6dp"
+            android:orientation="horizontal"
+            android:background="@drawable/border_layout_search"
+            android:layout_gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/details_header"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/priority_imageview"
+            android:layout_width="20dp"
             android:layout_height="20dp"
-            android:textSize="15sp"
-            android:gravity="bottom"
-            android:text="Детали" />
+            android:layout_gravity="center_vertical" />
 
-            <EditText
-                android:id="@+id/description_view"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@drawable/border_layout_search"
-                android:editable="true"
-                android:ellipsize="end"
-                android:ems="10"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:textSize="15sp" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/priority_material_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:entries="@array/priorities"
+            android:textSize="16sp"
+            android:text="Priority"/>
         </LinearLayout>
     </LinearLayout>
 
-<!--    <TextView-->
-<!--        android:id="@+id/history_header"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="20dp"-->
-<!--        android:textSize="15sp"-->
-<!--        android:gravity="bottom"-->
-<!--        android:text="История"-->
-<!--        android:layout_below="@id/data_layout"-->
-<!--        android:paddingHorizontal="12dp"/>-->
+
+    <LinearLayout
+        android:id="@+id/created_date_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_below="@id/priority_view_layout"
+        android:paddingHorizontal="6dp"
+        android:layout_marginTop="15dp">
+
+        <ImageView
+            android:id="@+id/date_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@drawable/outline_calendar_clock_24"
+            android:paddingHorizontal="6dp"
+            ></ImageView>
+
+        <TextView
+            android:id="@+id/date_header"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:text="Создана"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/date_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 авг 2024"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/changed_date_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_below="@id/created_date_layout"
+        android:paddingHorizontal="6dp"
+        android:layout_marginTop="6dp">
+
+        <ImageView
+            android:id="@+id/date_image2"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@drawable/outline_calendar_clock_24"
+            android:paddingHorizontal="6dp"
+            ></ImageView>
+
+        <TextView
+            android:id="@+id/date_header2"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:text="Изменена"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/date_view2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+
 
 
 <!--    <LinearLayout-->
-<!--        android:id="@+id/history_layout"-->
+<!--        android:id="@+id/task_str_parameters_layout"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/title_layout"-->
 <!--        android:orientation="horizontal"-->
-<!--        android:layout_below="@id/history_header"-->
 <!--        android:paddingHorizontal="12dp"-->
 <!--        android:weightSum="3">-->
 
 
 <!--        <LinearLayout-->
-<!--            android:layout_width="180dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_weight="1">-->
+<!--            android:id="@+id/status_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:orientation="vertical">-->
 
 <!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
+<!--                android:id="@+id/status_header"-->
+<!--                android:layout_width="110dp"-->
 <!--                android:layout_height="wrap_content"-->
-<!--                android:text="Исполнитель"-->
-<!--                android:textStyle="bold"/>-->
+<!--                android:text="Статус"-->
+<!--                android:textColor="@color/gray"-->
+<!--                android:textSize="20sp" />-->
+
 <!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
+<!--                android:id="@+id/status_view"-->
+<!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->
-<!--                android:text="Дата"/>-->
+<!--                android:text="Открыта"-->
+<!--                android:textSize="16sp" />-->
 
 <!--        </LinearLayout>-->
 
-<!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="2"-->
-<!--            android:text="Изменено:"/>-->
+
+
 
 <!--    </LinearLayout>-->
 
 <!--    <LinearLayout-->
-<!--        android:id="@+id/history_layout2"-->
+<!--        android:id="@+id/data_layout"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:layout_below="@id/history_layout"-->
-<!--        android:paddingHorizontal="12dp"-->
-<!--        android:weightSum="3">-->
-
+<!--        android:layout_below="@id/task_str_parameters_layout"-->
+<!--        android:orientation="vertical">-->
 
 <!--        <LinearLayout-->
-<!--            android:layout_width="180dp"-->
+<!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_weight="1">-->
+<!--            android:baselineAligned="false"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingHorizontal="12dp"-->
+<!--            android:weightSum="3">-->
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Исполнитель"-->
-<!--                android:textStyle="bold"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Дата"/>-->
 
 <!--        </LinearLayout>-->
-
-<!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="2"-->
-<!--            android:text="Изменено:"/>-->
-
 <!--    </LinearLayout>-->
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/history_layout3"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:layout_below="@id/history_layout2"-->
-<!--        android:paddingHorizontal="12dp"-->
-<!--        android:weightSum="3">-->
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/history_header"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="20dp"-->
+    <!--        android:textSize="15sp"-->
+    <!--        android:gravity="bottom"-->
+    <!--        android:text="История"-->
+    <!--        android:layout_below="@id/data_layout"-->
+    <!--        android:paddingHorizontal="12dp"/>-->
 
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="180dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_weight="1">-->
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/history_layout"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:layout_below="@id/history_header"-->
+    <!--        android:paddingHorizontal="12dp"-->
+    <!--        android:weightSum="3">-->
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Исполнитель"-->
-<!--                android:textStyle="bold"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Дата"/>-->
 
-<!--        </LinearLayout>-->
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="180dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:orientation="vertical"-->
+    <!--            android:layout_weight="1">-->
 
-<!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="2"-->
-<!--            android:text="Изменено:"/>-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="Исполнитель"-->
+    <!--                android:textStyle="bold"/>-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="Дата"/>-->
 
-<!--    </LinearLayout>-->
+    <!--        </LinearLayout>-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="2"-->
+    <!--            android:text="Изменено:"/>-->
+
+    <!--    </LinearLayout>-->
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/history_layout2"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:layout_below="@id/history_layout"-->
+    <!--        android:paddingHorizontal="12dp"-->
+    <!--        android:weightSum="3">-->
+
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="180dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:orientation="vertical"-->
+    <!--            android:layout_weight="1">-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="Исполнитель"-->
+    <!--                android:textStyle="bold"/>-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="Дата"/>-->
+
+    <!--        </LinearLayout>-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="2"-->
+    <!--            android:text="Изменено:"/>-->
+
+    <!--    </LinearLayout>-->
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/history_layout3"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:layout_below="@id/history_layout2"-->
+    <!--        android:paddingHorizontal="12dp"-->
+    <!--        android:weightSum="3">-->
+
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="180dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:orientation="vertical"-->
+    <!--            android:layout_weight="1">-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="Исполнитель"-->
+    <!--                android:textStyle="bold"/>-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="Дата"/>-->
+
+    <!--        </LinearLayout>-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="2"-->
+    <!--            android:text="Изменено:"/>-->
+
+    <!--    </LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/three_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
+        android:orientation="vertical"
         android:paddingHorizontal="12dp">
 
         <com.google.android.material.button.MaterialButton
@@ -392,60 +461,57 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:backgroundTint="@color/light_purple"
+            android:drawableStart="@drawable/baseline_cancel_24"
+            android:paddingHorizontal="120dp"
             android:text="Отклонить"
             android:textColor="@color/red"
             android:textSize="18sp"
             app:cornerRadius="5dp"
-            app:strokeWidth="1dp"
-            android:drawableStart="@drawable/baseline_cancel_24"
             app:iconGravity="textStart"
             app:iconSize="25dp"
             app:iconTint="@color/red"
-            android:paddingHorizontal="120dp"
-            />
+            app:strokeWidth="1dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_save"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/light_purple"
-            android:paddingHorizontal="27dp"
-            android:text="Сохранить"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:cornerRadius="5dp"
-            app:strokeWidth="1dp"
-            android:drawableStart="@drawable/baseline_check_24"
-            app:iconGravity="textStart"
-            app:iconSize="30dp"
-            app:iconTint="@color/black"
-            android:layout_marginEnd="2dp"
-            />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_save"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/light_purple"
+                android:drawableStart="@drawable/baseline_check_24"
+                android:paddingHorizontal="27dp"
+                android:text="Сохранить"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:cornerRadius="5dp"
+                app:iconGravity="textStart"
+                app:iconSize="30dp"
+                app:iconTint="@color/black"
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_in_work"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
+                android:layout_marginStart="2dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/light_purple"
+                android:drawableStart="@drawable/baseline_play_arrow_24"
                 android:paddingHorizontal="32dp"
                 android:text="В работу"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:cornerRadius="5dp"
-                app:strokeWidth="1dp"
-                android:drawableStart="@drawable/baseline_play_arrow_24"
                 app:iconGravity="textStart"
                 app:iconSize="30dp"
                 app:iconTint="@color/black"
-                android:layout_marginStart="2dp"
-                />
+                app:strokeWidth="1dp" />
         </LinearLayout>
 
     </LinearLayout>

@@ -1,10 +1,11 @@
-package com.ruparts.helperclasses;
+package com.ruparts.context.library;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class LibraryMaps {
+public class TaskLibraryModel implements Serializable {
 
     @JsonProperty("task_types")
     public HashMap<String, String> taskTypes;
@@ -16,15 +17,18 @@ public class LibraryMaps {
     public HashMap<String, String> implementer;
     @JsonProperty("status")
     public HashMap<String, String> status;
+    @JsonProperty("attribute_type")
+    public HashMap<String, String> attributeType;
     @JsonProperty("id_reference_type")
     public HashMap<String, String> idReferenceType;
 
-    public LibraryMaps() {
-        taskTypes = new HashMap<>();;
+    public TaskLibraryModel() {
+        taskTypes = new HashMap<>();
         userRoles = new HashMap<>();
         userRolesEditable = new HashMap<>();
         implementer = new HashMap<>();
         status = new HashMap<>();
+        attributeType = new HashMap<>();
         idReferenceType = new HashMap<>();
     }
 

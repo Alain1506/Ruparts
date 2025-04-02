@@ -1,10 +1,7 @@
 package com.ruparts;
 
-import static com.ruparts.MainActivity.libraryMaps;
-
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,15 +19,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.ruparts.context.library.LibraryRepository;
+import com.ruparts.context.library.TaskLibraryModel;
+import com.ruparts.context.task.model.TaskFilter;
 import com.ruparts.context.task.model.TaskId;
 import com.ruparts.context.task.model.TaskObject;
 
-import com.ruparts.context.task.model.api.TaskListRequest;
-import com.ruparts.context.task.service.TaskApiClient;
 import com.ruparts.context.task.service.TaskRepository;
 import com.google.android.material.tabs.TabLayout;
 import com.ruparts.main.Container;
-import com.ruparts.main.exception.api.NotAuthorizedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,17 +38,16 @@ import java.util.Objects;
 
 public class TasksActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
-
-    public static List<TaskObject> listOfTasks = new ArrayList<>();
-    public static Map<TaskId, TaskObject> mapOfTasks = new HashMap<>();
     public static ArrayList<ExpListGroup> expListContents;
     public static TaskRepository taskRepository;
+    public static LibraryRepository libraryRepository;
     public static TasksViewPager2Adapter fragmentPagerAdapter;
 
     private SearchManager searchManager;
     private ExpandableListAdapter adapter;
     private TabLayout tabLayout;
     private ViewPager2 fragmentPager;
+    private TaskLibraryModel taskLibraryModel;
 
 
     @Override
@@ -59,16 +55,7 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tasks);
-
-        try {
-            taskRepository = Container.getTaskRepository();
-        } catch (NotAuthorizedException e) {
-            Intent intent = new Intent(this, AuthorizationActivity.class);
-            startActivity(intent);
-            return;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        taskRepository = Container.getTaskRepository();
 
         //добавить видимость еще одного layout.xml
         LayoutInflater layInfl = this.getLayoutInflater();
@@ -86,6 +73,10 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
         Objects.requireNonNull(getSupportActionBar()).setTitle("Задачи");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        libraryRepository = Container.getLibraryRepository();
+        libraryRepository.init(this.getApplicationContext());
 
         expListContents = initializeExpListContents();
 
@@ -139,15 +130,15 @@ public class TasksActivity extends AppCompatActivity implements SearchView.OnQue
 
     private ArrayList<ExpListGroup> initializeExpListContents() {
 
-        TaskApiClient taskApiClient = new TaskApiClient(Container.getApiClient());
-        TaskListRequest taskListRequest = new TaskListRequest();
-        listOfTasks = taskApiClient.list(taskListRequest);
+        List<TaskObject> listOfTasks = taskRepository.getByFilter(new TaskFilter());
 
         ArrayList<ExpListGroup> allGroups = new ArrayList<>();
 
-        for (String s : libraryMaps.taskTypes.keySet()) {
+        taskLibraryModel = libraryRepository.getLibrary().taskLibraryModel;
+
+        for (String s : taskLibraryModel.taskTypes.keySet()) {
             ExpListGroup elg = new ExpListGroup(s);
-            elg.elgTaskTypeToShow = libraryMaps.taskTypes.get(s);
+            elg.elgTaskTypeToShow = taskLibraryModel.taskTypes.get(s);
             allGroups.add(elg);
         }
 

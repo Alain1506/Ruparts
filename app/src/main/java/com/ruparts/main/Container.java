@@ -1,5 +1,6 @@
 package com.ruparts.main;
 
+import com.ruparts.context.library.LibraryRepository;
 import com.ruparts.context.task.service.TaskApiClient;
 import com.ruparts.context.task.service.TaskRepository;
 
@@ -22,6 +23,10 @@ public class Container {
 
     public static TaskRepository getTaskRepository() {
         return (TaskRepository) getService(TaskRepository.class, getTaskApiClient());
+    }
+
+    public static LibraryRepository getLibraryRepository() {
+        return (LibraryRepository) getService(LibraryRepository.class, getTaskApiClient());
     }
 
     public static Object getService(Class clazz, Object ...params) {

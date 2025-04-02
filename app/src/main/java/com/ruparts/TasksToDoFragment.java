@@ -94,15 +94,10 @@ public class TasksToDoFragment extends Fragment {
                 ExpListGroup elg = filtered.get(parentPosition);
                 TaskObject task = elg.itemsList.get(childPosition);
 
-                int number = task.id.id;
-
                 Intent intent = new Intent(context, TasksStructure.class);
-
                 Bundle extras = new Bundle();
                 extras.putSerializable(TaskObject.class.getSimpleName(), task);
-                extras.putInt("id", number);
                 intent.putExtras(extras);
-
                 startActivity(intent);
 
                 return false;
@@ -113,7 +108,7 @@ public class TasksToDoFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView = (ExpandableListView) view.findViewById(R.id.tasks_exp_list_view_To_Do);
+        listView = view.findViewById(R.id.tasks_exp_list_view_To_Do);
         this.loadListView();
     }
 

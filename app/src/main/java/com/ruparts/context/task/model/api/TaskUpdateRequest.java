@@ -1,5 +1,6 @@
 package com.ruparts.context.task.model.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.ruparts.context.task.model.TaskId;
@@ -8,7 +9,8 @@ import com.ruparts.main.Defaults;
 
 import java.text.SimpleDateFormat;
 
-public class TaskUpdateRequestNew {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TaskUpdateRequest {
 
     @JsonUnwrapped
     public TaskId id;
@@ -28,7 +30,7 @@ public class TaskUpdateRequestNew {
     @JsonProperty("implementer")
     public String implementer;
 
-    public TaskUpdateRequestNew(TaskObject task) {
+    public TaskUpdateRequest(TaskObject task) {
 
         id = (task.id.equals(0)) ? null : task.id;
         title = (task.taskTitle == null) ? null : task.taskTitle;
